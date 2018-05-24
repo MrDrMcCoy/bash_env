@@ -135,3 +135,30 @@ ffmpeg-update () {
         ${subpath}ffprobe \
         ${subpath}qt-faststart
 }
+
+ffv () {
+  local SRCFILE="${1##*/}"
+  local SRCNAME="${SRCFILE%.*}"
+  local DSTFILE="${2:-}${SRCNAME}.webm"
+  local WIDTH=$(ffmpeg -i "$1" |& grep --color=never -Po '\d+(?=x\d+ )')
+  if [ $WIDTH -gt 1280 ]; then
+    local SHRINK=",scale=1280:-1"
+  fi
+  echo Converting ${SRCFILE} to ${DSTFILE}
+  ffmpeg \
+    -i "${1}" \
+    -ac 1 \
+    -af "acompressor" \
+    -aspect 16:9 \
+    -b:a 96k \
+    -b:v 0 \
+    -c:a libopus \
+    -c:v libvpx-vp9 \
+    -crf 22 \
+    -r 24 \
+    -stats \
+    -strict -2 \
+    -vf hqdn3d${SHRINK:-} \
+    -y \
+    "${DSTFILE}"
+}
