@@ -101,7 +101,7 @@ ahab () {
       done
   while (($#)) ; do
     case "$1" in
-      --volume|-v)
+      --volume|-v|-a|--all)
         echo "Removing volumes..."
         shift
         docker volume ls | awk '{print $2}' | tail -n +2 \
@@ -109,7 +109,7 @@ ahab () {
               docker volume rm $id
             done
       ;;
-      --image|-i)
+      --image|-i|-a|--all)
         shift
         echo "Removing images..."
         docker image ls | awk '{print $3}' | tail -n +2 \
