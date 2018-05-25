@@ -1,4 +1,4 @@
-#!/usr/local/bin/bash
+#!/usr/bin/env bash
 
 # Exports for Homebrew
 export PATH=/opt/local/bin:/opt/local/sbin:/usr/local/Cellar:/usr/local/bin:/usr/local/sbin:$PATH
