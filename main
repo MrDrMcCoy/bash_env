@@ -4,7 +4,18 @@
 source "$PWD/bash-completion/bash_completion"
 
 # Prepend stuff to PATH
-export PATH=$HOME/bin:$PATH
+export PATH="$(sort -u << EOF | tr '\n' ':'
+$HOME/bin
+/usr/local/bin
+/usr/local/sbin
+/usr/bin
+/usr/sbin
+/bin
+/sbin
+/usr/lib/mit/sbin
+$(tr ':' '\n' <<< "$PATH")
+EOF
+)"
 
 # History settings
 HISTCONTROL=ignoredups:ignorespace
@@ -43,6 +54,14 @@ source aliases
 source colors
 source functions
 source options
+source get_binaries
 
 # Source extra Mac stuff if on a Mac
 [[ "$(uname)" == 'Darwin' ]] && source "$PWD/osx"
+
+if [ -d "$HOME/.pyenv" ] ; then
+  eval "$(pyenv init -)"
+else
+  get__pyenv
+  eval "$(pyenv init -)"
+fi

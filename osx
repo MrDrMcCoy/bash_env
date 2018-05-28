@@ -1,18 +1,12 @@
 #!/usr/bin/env bash
 
 # Exports for Homebrew
-export PATH=/opt/local/bin:/opt/local/sbin:/usr/local/Cellar:/usr/local/bin:/usr/local/sbin:$PATH
+export PATH="/usr/local/Cellar:/opt/local/bin:/opt/local/sbin:$PATH"
 export MANPATH=/opt/local/share/man:$MANPATH
 export DISPLAY=:0.0
-
-# Use a real Python via pyenv
-eval "$(pyenv init -)"
-
-# Aliases
-alias bash='/usr/local/bin/bash'
 
 # Colors
 if eval $(gdircolors "$PWD/dircolors/dircolors.256dark") ; then
   alias ls='gls --color=always'
-  alias grep='pcregrep --color=always'
+  alias grep='pcregrep --color=auto'
 fi

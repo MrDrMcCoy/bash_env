@@ -176,3 +176,7 @@ ffc () {
     $3 $2
   rm "$concat"
 }
+
+duc () {
+  du -xam "$1" | distribution -g
+}

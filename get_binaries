@@ -1,0 +1,179 @@
+#!/usr/bin/env bash
+
+mkdir -vp "$HOME/bin"
+
+get__bar () {
+  wget -O- http://www.theiling.de/downloads/bar-1.4-src.tar.bz2 \
+    | tar --no-same-owner --strip-components=1 -xvjC "$HOME/bin" bar-1.4/bar
+}
+
+get__catimg () {
+  wget -O- https://github.com/posva/catimg/archive/v2.4.0.tar.gz \
+    | tar --no-same-owner --strip-components=1 -xzvC "$HOME/bin" catimg-2.4.0/catimg
+}
+
+get__conspy () {
+  local build_dir="/tmp/conspy"
+  mkdir -vp "$build_dir"
+  wget -O- https://cfhcable.dl.sourceforge.net/project/conspy/conspy-1.14-1/conspy-1.14.tar.gz \
+    | tar --no-same-owner --strip-components=1 -xzvC "$build_dir"
+  cd "$build_dir"
+  make
+  sudo make install
+  cd -
+  rm -rf "$build_dir"
+}
+
+get__dategrep () {
+  cpan App::dategrep
+}
+
+get__distribution () {
+  wget -O "$HOME/bin/distribution" https://raw.githubusercontent.com/philovivero/distribution/master/distribution.py
+  chmod a+x "$HOME/bin/distribution"
+}
+
+get__hub () {
+  local version=2.2.9
+  case $(uname) in
+    *inux) local arch=linux ;;
+    *arwin) local arch=darwin ;;
+  esac
+  wget -O- https://github.com/github/hub/releases/download/v2.2.9/hub-${arch}-amd64-${version}.tgz \
+    | tar --no-same-owner --strip-components=2 -xzvC "$HOME/bin" \
+        "hub-${arch}-amd64-${version}/bin/hub"
+}
+
+get__jq () {
+  local version=1.5
+  case $(uname) in
+    *inux) local arch=linux64 ;;
+    *arwin) local arch=osx-amd64 ;;
+  esac
+  wget -O "$HOME/bin/jq" https://github.com/stedolan/jq/releases/download/jq-$version/jq-$arch
+  chmod a+x "$HOME/bin/jq"
+}
+
+get__lnav () {
+  local version=0.8.3
+  case $(uname) in
+    *inux) local arch=linux-64bit ;;
+    *arwin) local arch=os-x ;;
+  esac
+  cd /tmp
+  wget -c https://github.com/tstack/lnav/releases/download/v${version}/lnav-${version}-${arch}.zip
+  unzip -uj \
+    lnav-${version}-${arch}.zip \
+    lnav-${version}/lnav \
+    -d "$HOME/bin"
+  rm lnav-${version}-${arch}.zip
+  cd -
+}
+
+get__massren () {
+  local GOPATH="$HOME"
+  go get -u github.com/laurent22/massren
+  go install github.com/laurent22/massren
+}
+
+get__ni () {
+  wget -O- https://github.com/spencertipping/ni/archive/develop.tar.gz \
+    | tar --no-same-owner -xzvC "$HOME/bin/"
+  ln -sv "$HOME/bin/ni-develop/ni" "$HOME/bin/ni"
+}
+
+get__nms () {
+  local build_dir="/tmp/nms"
+  mkdir -vp "$build_dir"
+  wget -O- https://github.com/bartobri/no-more-secrets/archive/master.tar.gz \
+    | tar --no-same-owner --strip-components=1 -xzvC "$build_dir"
+  cd "$build_dir"
+  make
+  cp bin/nms "$HOME/bin/nms"
+  cd -
+  rm -fr "$build_dir"
+}
+
+get__parallel () {
+  local url="https://ftp.gnu.org/gnu/parallel/parallel-latest.tar.bz2"
+  local base="$(wget -qO- $url | tar -tj | head -n1)"
+  wget -O- "$url" \
+    | tar --no-same-owner --strip-components=2 -xvjC "$HOME/bin" \
+        "${base}src/env_parallel" \
+        "${base}src/env_parallel.bash" \
+        "${base}src/niceload" \
+        "${base}src/parallel" \
+        "${base}src/parcat" \
+        "${base}src/parset" \
+        "${base}src/sem" \
+        "${base}src/sql" 
+}
+
+get__progress () {
+  local build_dir="/tmp/progress"
+  mkdir -vp "$build_dir"
+  wget -O- https://github.com/Xfennec/progress/archive/master.tar.gz \
+    | tar --no-same-owner --strip-components=1 -xzvC "$build_dir"
+  cd "$build_dir"
+  make
+  sudo make install
+  cd -
+  rm -fr "$build_dir"
+}
+
+get__pup () {
+  local GOPATH="$HOME"
+  go get github.com/ericchiang/pup
+  go install github.com/ericchiang/pup
+}
+
+get__pyenv () {
+  mkdir -vp "$HOME/.pyenv"
+  wget -O- https://github.com/pyenv/pyenv/archive/master.tar.gz \
+    | tar --no-same-owner --strip-components=1 -xzvC "$HOME/.pyenv"
+  ln -sv "$HOME/.pyenv/bin/pyenv" "$HOME/bin/pyenv"
+}
+
+get__q () {
+  wget -O "$HOME/bin/q" https://raw.githubusercontent.com/harelba/q/master/bin/q
+  chmod a+x "$HOME/bin/q"
+}
+
+get__spark () {
+  wget -O "$HOME/bin/spark" https://raw.githubusercontent.com/holman/spark/master/spark
+  chmod a+x "$HOME/bin/spark"
+}
+
+get__speedtest () {
+  wget -O "$HOME/bin/speedtest" https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py
+  chmod a+x "$HOME/bin/speedtest"
+}
+
+get__su-exec () {
+  local build_dir="/tmp/su-exec"
+  git clone https://github.com/ncopa/su-exec.git "$build_dir"
+  cd "$build_dir"
+  make
+  sudo cp -v su-exec "/usr/bin/su-exec"
+  cd -
+  rm -fr "$build_dir"
+}
+
+get__suplemon () {
+  sudo pip3 install suplemon
+}
+
+get__tldr () {
+  wget -O "$HOME/bin/tldr" https://4e4.win/tldr
+  chmod a+x "$HOME/bin/tldr"
+  tldr -u
+}
+
+get_binaries () {
+  declare -F | grep -o '(?<=\s)get__\S+' \
+    | while read -r func ; do
+        hr
+        echo "Running $func"
+        eval $func
+      done
+}

@@ -12,5 +12,4 @@ export LESSOPEN="|$PWD/lesspipe/lesspipe.sh %s"
 # Set up color profile
 if eval $(dircolors "$PWD/dircolors/dircolors.256dark") ; then
   alias ls='ls --color=always'
-  alias grep='grep --color=always'
 fi &> /dev/null
