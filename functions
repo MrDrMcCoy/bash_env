@@ -2,7 +2,7 @@
 
 resetadsrv () {
 	for host in "$@" ; do
-    echo -e "\nRestarting ad services on $h"
+    echo -e "\nRestarting ad services on $host"
     sudo ssh "$host" bash -v <<< "
       trap exit INT TERM QUIT KILL HUP ERR
       service syslog-ng restart
