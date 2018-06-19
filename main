@@ -1,18 +1,16 @@
 #!/usr/bin/env bash
 
-# Enable Bash completion
-source "$PWD/bash-completion/bash_completion"
-
 # Prepend stuff to PATH
-export PATH="$(sort -u << EOF | tr '\n' ':'
+export PATH="$(
+sort -u << EOF | tr '\n' ':'
 $HOME/bin
-/usr/local/bin
-/usr/local/sbin
-/usr/bin
-/usr/sbin
 /bin
 /sbin
+/usr/bin
 /usr/lib/mit/sbin
+/usr/local/bin
+/usr/local/sbin
+/usr/sbin
 $(tr ':' '\n' <<< "$PATH")
 EOF
 )"
@@ -36,9 +34,12 @@ start_agent () {
 if [ -f "${SSH_ENV}" ]; then
   source "${SSH_ENV}" > /dev/null
   ps -ef | grep ${SSH_AGENT_PID} | grep 'ssh-agent$' > /dev/null || { start_agent; }
-else
+elif [[ $- == *i* ]] ; then
   start_agent;
 fi
+
+# Enable Bash completion
+source "$PWD/bash-completion/bash_completion"
 
 # Set a cooler prompt for git and stuff
 source "$PWD/bash-git-prompt/gitprompt.sh"
@@ -59,9 +60,10 @@ source get_binaries
 # Source extra Mac stuff if on a Mac
 [[ "$(uname)" == 'Darwin' ]] && source "$PWD/osx"
 
-if [ -d "$HOME/.pyenv" ] ; then
+if [ -d "$HOME/.pyenv" ] && which pyenv 2>&1 > /dev/null ; then
   eval "$(pyenv init -)"
 else
-  get__pyenv
-  eval "$(pyenv init -)"
+logger -s <<< "ERROR pyenv is not installed."
+#  get__pyenv
+#  eval "$(pyenv init -)"
 fi

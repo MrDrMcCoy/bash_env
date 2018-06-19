@@ -26,8 +26,8 @@ resetswap () {
     ssh "$host" bash -v <<< '
       trap exit INT TERM QUIT KILL HUP ERR
       service snmpd stop || true
-      until [ $(grep SwapCached /proc/meminfo | awk "{print \$2}") = 0 ]; do
-        if [ $(grep SwapTotal /proc/meminfo | awk "{print \$2}") -lt $(grep MemFree /proc/meminfo | awk "{print \$2}") ]; then
+      until [ $(awk "/SwapCached/{print \$2}" /proc/meminfo) = 0 ]; do
+        if [ $(awk "/SwapCached/{print \$2}" /proc/meminfo) -lt $(awk "/MemFree/{print \$2}" /proc/meminfo) ]; then
           free -h
           echo "Flushing swap..."
           swapoff -av
@@ -73,10 +73,10 @@ oomclear () {
 }
 
 flogs () { # find logs and print
-  find -L "$1" -type f -iname "*.log" | \
+  find -L "$1" -maxdepth 1 -type f -iname "*.log" | \
     while read -r l ; do
       echo -e "\n$l\n"
-      tail -n 200 "$l" | LC_ALL=C grep -iPC2 'err|fatal|except|fail' | colorize
+      tail -n 200 "$l" | LC_ALL=C grep -iPC2 'err|fatal|except|fail|caused by|\tat\s'
     done \
   |& less -SIr
 }
@@ -164,17 +164,12 @@ ffv () {
 }
 
 ffc () {
-  local concat="$(mktemp)"
-  for f in $1 ; do
-    echo "file '$PWD/$f'"
-  done | tee "$concat"
   ffmpeg \
     -f concat \
-    -c copy \
     -safe 0 \
-    -i "$concat" \
+    -i <({find $PWD -maxdepth 1 -type f -name "$1" -exec echo "file '{}'" \; | sort -h}) \
+    -c copy \
     $3 $2
-  rm "$concat"
 }
 
 duc () {
