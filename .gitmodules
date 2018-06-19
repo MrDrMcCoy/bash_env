@@ -1,6 +1,6 @@
 [submodule "bblib"]
 	path = bblib
-	url = git@github.com:MrDrMcCoy/bblib.git
+	url = https://github.com/MrDrMcCoy/bblib.git
 [submodule "lesspipe"]
 	path = lesspipe
 	url = https://github.com/wofr06/lesspipe.git
