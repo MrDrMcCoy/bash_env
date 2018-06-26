@@ -55,19 +55,20 @@ get__jq () {
 }
 
 get__lnav () {
-  local version=0.8.3
   case $(uname) in
     *inux) local arch=linux-64bit ;;
     *arwin) local arch=os-x ;;
   esac
-  cd /tmp
-  wget -c https://github.com/tstack/lnav/releases/download/v${version}/lnav-${version}-${arch}.zip
-  unzip -uj \
-    lnav-${version}-${arch}.zip \
-    lnav-${version}/lnav \
+  local url="$(
+    wget -qO- https://api.github.com/repos/tstack/lnav/releases \
+      | awk -F \" "/browser_download_url.*${arch}.zip/{ print \$4 ; exit }"
+    )"
+  wget -nv -O /tmp/lnav.zip "$url" || return
+  unzip -oj \
+    /tmp/lnav.zip \
+    *lnav \
     -d "$HOME/bin"
-  rm lnav-${version}-${arch}.zip
-  cd -
+  rm -v /tmp/lnav.zip
 }
 
 get__massren () {
