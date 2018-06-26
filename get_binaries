@@ -58,9 +58,10 @@ get__lnav () {
   case $(uname) in
     *inux) local arch=linux-64bit ;;
     *arwin) local arch=os-x ;;
+    *) echo "Unknown platform: $(uname)" ; return ;;
   esac
   local url="$(
-    wget -qO- https://api.github.com/repos/tstack/lnav/releases \
+    wget -nv -O- https://api.github.com/repos/tstack/lnav/releases \
       | awk -F \" "/browser_download_url.*${arch}.zip/{ print \$4 ; exit }"
     )"
   wget -nv -O /tmp/lnav.zip "$url" || return
