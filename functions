@@ -137,25 +137,30 @@ ffmpeg-update () {
 }
 
 ffv () {
+  # usage: ffv srcfile destdir
   local SRCFILE="${1##*/}"
-  local SRCNAME="${SRCFILE%.*}"
-  local DSTFILE="${2:-}${SRCNAME}.webm"
+  local DSTFILE="${2:-}${SRCFILE%.*}.webm"
   local WIDTH=$(ffmpeg -i "$1" |& grep --color=never -Po '\d+(?=x\d+ )')
   if [ $WIDTH -gt 1280 ]; then
     local SHRINK=",scale=1280:-1"
   fi
   echo Converting ${SRCFILE} to ${DSTFILE}
   ffmpeg \
+    -loglevel error \
     -i "${1}" \
     -ac 1 \
     -af "acompressor" \
     -aspect 16:9 \
-    -b:a 96k \
+    -b:a 64k \
     -b:v 0 \
     -c:a libopus \
     -c:v libvpx-vp9 \
-    -crf 22 \
+    -crf 24 \
     -r 24 \
+    -threads 8 \
+    -speed 4 \
+    -tile-columns 6 \
+    -frame-parallel 1 \
     -stats \
     -strict -2 \
     -vf hqdn3d${SHRINK:-} \
