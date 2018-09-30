@@ -11,13 +11,14 @@ $HOME/.pyenv/shims
 /usr/sbin
 /bin
 /sbin
+$HOME/.morpheus/bin
 EOF
 )"
 
 # History settings
 HISTCONTROL=ignoredups:ignorespace
-HISTSIZE=1000
-HISTFILESIZE=2000
+HISTSIZE=2000
+HISTFILESIZE=4000
 HISTTIMEFORMAT="%d/%m/%y %T "
 
 # Start SSH agent
@@ -58,11 +59,3 @@ source get_binaries
 
 # Source extra Mac stuff if on a Mac
 [[ "$(uname)" == 'Darwin' ]] && source "$PWD/osx"
-
-if [ -d "$HOME/.pyenv" ] && which pyenv 2>&1 > /dev/null ; then
-  eval "$(pyenv init -)"
-else
-logger -s <<< "ERROR pyenv is not installed."
-#  get__pyenv
-#  eval "$(pyenv init -)"
-fi

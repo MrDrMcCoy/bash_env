@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+get__ack () {
+  curl -SL# https://beyondgrep.com/ack-2.24-single-file \
+    > "$HOME/bin/ack"
+  chmod 0755 ~/bin/ack
+}
+
 get__bar () {
   curl -SL# http://www.theiling.de/downloads/bar-1.4-src.tar.bz2 \
     | tar --no-same-owner --strip-components=1 -xvjC "$HOME/bin" bar-1.4/bar
@@ -37,6 +43,26 @@ get__dategrep () {
 get__distribution () {
   curl -SL# -o "$HOME/bin/distribution" https://raw.githubusercontent.com/philovivero/distribution/master/distribution.py
   chmod a+x "$HOME/bin/distribution"
+}
+
+get__dupf () {
+  curl -SL# https://downloads.sourceforge.net/project/doubles/Duplicate%20Files%20Finder/0.8.0/dupfinder-0.8.0-source_and_binaries.tar.gz \
+    | tar --no-same-owner --strip-components=2 -xzvC "$HOME/bin/" \
+      dupfinder-0.8/binary/dupf \
+      dupfinder-0.8/binary/dupfgui
+}
+
+get__ffmpeg () {
+  subpath="$(
+    wget -qO- https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz \
+      | tar -tJ | head -n1
+  )"
+  wget -qO- https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz \
+    | tar --no-same-owner --strip-components=1 -xvJC "$HOME/bin/" \
+        ${subpath}ffmpeg-10bit \
+        ${subpath}ffmpeg \
+        ${subpath}ffprobe \
+        ${subpath}qt-faststart
 }
 
 get__gosu () {
@@ -106,6 +132,38 @@ get__massren () {
   go install github.com/laurent22/massren
 }
 
+get__morpheus () {
+  # echo "Package is disabled" ; return
+  local morpheus_dir="$HOME/.morpheus"
+  mkdir -vp "$morpheus_dir"
+  local pkgs=(
+    http://morpheus.2f30.org/0.0/packages/x86_64/busybox%231.22.1.pkg.tgz
+    http://morpheus.2f30.org/0.0/packages/x86_64/curl%237.36.0.pkg.tgz
+    http://morpheus.2f30.org/0.0/packages/x86_64/elinks%230.12pre6.pkg.tgz
+    http://morpheus.2f30.org/0.0/packages/x86_64/file%235.17.pkg.tgz
+    http://morpheus.2f30.org/0.0/packages/x86_64/git%231.9.2.pkg.tgz
+    http://morpheus.2f30.org/0.0/packages/x86_64/hbase.pkg.tgz
+    http://morpheus.2f30.org/0.0/packages/x86_64/htop%231.0.3.pkg.tgz
+    http://morpheus.2f30.org/0.0/packages/x86_64/iproute2%233.14.0.pkg.tgz
+    http://morpheus.2f30.org/0.0/packages/x86_64/openssh%236.5p1.pkg.tgz
+    http://morpheus.2f30.org/0.0/packages/x86_64/rsync%233.0.9.pkg.tgz
+    http://morpheus.2f30.org/0.0/packages/x86_64/rtorrent%230.9.2.pkg.tgz
+    http://morpheus.2f30.org/0.0/packages/x86_64/sbase.pkg.tgz
+    http://morpheus.2f30.org/0.0/packages/x86_64/sed%234.2.pkg.tgz
+    http://morpheus.2f30.org/0.0/packages/x86_64/strace%234.8.pkg.tgz
+    http://morpheus.2f30.org/0.0/packages/x86_64/tmux%231.9a.pkg.tgz
+    http://morpheus.2f30.org/0.0/packages/x86_64/ubase.pkg.tgz
+    http://morpheus.2f30.org/0.0/packages/x86_64/util-linux%232.24.2.pkg.tgz
+    http://morpheus.2f30.org/0.0/packages/x86_64/vim%237.4.pkg.tgz
+  )
+  for pkg in "${pkgs[@]}" ; do
+    name="${pkg##*/}"
+    name="${name%%%*}"
+    echo "Installing $name"
+    curl -SL# "$pkg" | tar --no-same-owner -xzC "$morpheus_dir"
+  done
+}
+
 get__ni () {
   curl -SL# https://github.com/spencertipping/ni/archive/develop.tar.gz \
     | tar --no-same-owner -xzvC "$HOME/bin/"
@@ -113,15 +171,18 @@ get__ni () {
 }
 
 get__nms () {
-  local build_dir="/tmp/nms"
-  mkdir -vp "$build_dir"
-  curl -SL# https://github.com/bartobri/no-more-secrets/archive/master.tar.gz \
-    | tar --no-same-owner --strip-components=1 -xzvC "$build_dir"
+  local build_dir="$(mktemp -d)"
   cd "$build_dir"
+  curl -SL# https://github.com/bartobri/no-more-secrets/archive/master.tar.gz \
+    | tar --no-same-owner --strip-components=1 -xz
   make
-  cp bin/nms "$HOME/bin/nms"
+  cp bin/nms "$HOME/bin/"
   cd -
   rm -fr "$build_dir"
+}
+
+get__ohmu () {
+  pip install ohmu --user --upgrade
 }
 
 get__parallel () {
@@ -140,13 +201,12 @@ get__parallel () {
 }
 
 get__progress () {
-  local build_dir="/tmp/progress"
-  mkdir -vp "$build_dir"
-  curl -SL# https://github.com/Xfennec/progress/archive/master.tar.gz \
-    | tar --no-same-owner --strip-components=1 -xzvC "$build_dir"
+  local build_dir="$(mktemp -d)"
   cd "$build_dir"
+  curl -SL# https://github.com/Xfennec/progress/archive/master.tar.gz \
+    | tar --no-same-owner --strip-components=1 -xz
   make
-  cp -v progress $HOME/bin/progress
+  cp -v progress "$HOME/bin/progress"
   cd -
   rm -fr "$build_dir"
 }

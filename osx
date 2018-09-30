@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+# Load pyenv
+if [ -d "$HOME/.pyenv" ] && which pyenv 2>&1 > /dev/null ; then
+  eval "$(pyenv init -)"
+else
+logger -st bash_env:osx "ERROR: pyenv is not installed."
+fi
+
 # Exports for Homebrew
 export PATH="/usr/local/Cellar:/opt/local/bin:/opt/local/sbin:$PATH"
 
