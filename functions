@@ -127,8 +127,8 @@ ffv () {
   # usage: ffv srcfile destdir
   local SRCFILE="${1##*/}"
   local DSTFILE="${2:-${SRCFILE%.*}}.webm"
-  local WIDTH=$(ffmpeg -i "$1" |& grep --color=never -Po '\d+(?=x\d+ )')
-  if [ $WIDTH -gt 1920 ]; then
+  local WIDTH=$(ffmpeg -i "$1" |& grep --color=never -Po '\d+(?=x\d+(,| ))')
+  if [ ${WIDTH} -gt 1920 ]; then
     local SHRINK=",scale=1920:-1"
   fi
   echo Converting ${SRCFILE} to ${DSTFILE}
