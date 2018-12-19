@@ -59,10 +59,8 @@ get__ffmpeg () {
   )"
   wget -qO- https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz \
     | tar --no-same-owner --strip-components=1 -xvJC "$HOME/bin/" \
-        ${subpath}ffmpeg-10bit \
-        ${subpath}ffmpeg \
-        ${subpath}ffprobe \
-        ${subpath}qt-faststart
+      ${subpath}ffmpeg \
+      ${subpath}ffprobe
 }
 
 get__gosu () {
