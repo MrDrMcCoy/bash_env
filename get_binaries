@@ -126,7 +126,7 @@ get__lnav () {
 
 get__massren () {
   local GOPATH="$HOME"
-  go get -u github.com/laurent22/massren
+  go get -v -u github.com/laurent22/massren
   go install github.com/laurent22/massren
 }
 
@@ -211,7 +211,7 @@ get__progress () {
 
 get__pup () {
   local GOPATH="$HOME"
-  go get github.com/ericchiang/pup
+  go get -v github.com/ericchiang/pup
   go install github.com/ericchiang/pup
 }
 
@@ -239,6 +239,12 @@ get__speedtest () {
 
 get__suplemon () {
   sudo pip3 install --upgrade suplemon
+}
+
+get__textql () {
+  local GOPATH="$HOME"
+  go get -v -u github.com/dinedal/textql/...
+  mv ~/go/bin/textql ~/bin/
 }
 
 get__tldr () {
