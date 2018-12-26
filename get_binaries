@@ -1,22 +1,33 @@
 #!/usr/bin/env bash
 
 get__ack () {
-  curl -SL# https://beyondgrep.com/ack-2.24-single-file \
-    > "$HOME/bin/ack"
+  curl -L# https://beyondgrep.com/ack-2.24-single-file \
+    -o "$HOME/bin/ack"
   chmod 0755 ~/bin/ack
 }
 
+get__adb () {
+  local ver="$(
+    curl -sSL https://developer.android.com/studio/releases/platform-tools \
+      | grep -iPom1 '(?<=\>)[\d\.]{4,}(?= )' )"
+  echo "Downloading Android platform tools version ${ver}"
+  curl -L# https://dl.google.com/android/repository/platform-tools_r${ver}-linux.zip \
+    -o /tmp/adb.zip || return
+  unzip -qu /tmp/adb.zip -d ~/bin
+  rm -v /tmp/adb.zip
+}
+
 get__bar () {
-  curl -SL# http://www.theiling.de/downloads/bar-1.4-src.tar.bz2 \
+  curl -L# http://www.theiling.de/downloads/bar-1.4-src.tar.bz2 \
     | tar --no-same-owner --strip-components=1 -xvjC "$HOME/bin" bar-1.4/bar
 }
 
 get__catimg () {
   local url="$(
-    curl -sSL https://api.github.com/repos/posva/catimg/releases \
+    curl -sL https://api.github.com/repos/posva/catimg/releases \
       | awk -F \" "/zipball_url/{ print \$4 ; exit }"
     )"
-  curl -SL# "$url" > /tmp/catimg.zip || return
+  curl -L# "$url" -o /tmp/catimg.zip || return
   unzip -oj \
     /tmp/catimg.zip \
     *catimg \
@@ -27,7 +38,7 @@ get__catimg () {
 get__conspy () {
   local build_dir="/tmp/conspy"
   mkdir -vp "$build_dir"
-  curl -SL# https://cfhcable.dl.sourceforge.net/project/conspy/conspy-1.14-1/conspy-1.14.tar.gz \
+  curl -L# https://cfhcable.dl.sourceforge.net/project/conspy/conspy-1.14-1/conspy-1.14.tar.gz \
     | tar --no-same-owner --strip-components=1 -xzvC "$build_dir"
   cd "$build_dir"
   make || return
@@ -37,16 +48,18 @@ get__conspy () {
 }
 
 get__dategrep () {
+  local NONINTERACTIVE_TESTING=0
   cpan App::dategrep
 }
 
 get__distribution () {
-  curl -SL# -o "$HOME/bin/distribution" https://raw.githubusercontent.com/philovivero/distribution/master/distribution.py
+  curl -L# https://raw.githubusercontent.com/philovivero/distribution/master/distribution.py \
+    -o "$HOME/bin/distribution"
   chmod a+x "$HOME/bin/distribution"
 }
 
 get__dupf () {
-  curl -SL# https://downloads.sourceforge.net/project/doubles/Duplicate%20Files%20Finder/0.8.0/dupfinder-0.8.0-source_and_binaries.tar.gz \
+  curl -L# https://downloads.sourceforge.net/project/doubles/Duplicate%20Files%20Finder/0.8.0/dupfinder-0.8.0-source_and_binaries.tar.gz \
     | tar --no-same-owner --strip-components=2 -xzvC "$HOME/bin/" \
       dupfinder-0.8/binary/dupf \
       dupfinder-0.8/binary/dupfgui
@@ -54,10 +67,10 @@ get__dupf () {
 
 get__ffmpeg () {
   subpath="$(
-    wget -qO- https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz \
+    curl -sSL https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz \
       | tar -tJ | head -n1
   )"
-  wget -qO- https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz \
+  curl -L# https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz \
     | tar --no-same-owner --strip-components=1 -xvJC "$HOME/bin/" \
       ${subpath}ffmpeg \
       ${subpath}ffprobe
@@ -70,7 +83,7 @@ get__gosu () {
         curl -sSL https://api.github.com/repos/tianon/gosu/releases \
           | awk -F \" "/browser_download_url.*amd64/{ print \$4 ; exit }"
         )"
-      curl -SL# "$url" > "$HOME/bin/hub"
+      curl -L# "$url" > "$HOME/bin/hub"
     ;;
     *) echo "Unknown platform: $(uname -sm)" ; return ;;
   esac
@@ -85,9 +98,9 @@ get__hub () {
   local url="$(
     curl -sSL https://api.github.com/repos/github/hub/releases \
       | awk -F \" "/browser_download_url.*${arch}/{ print \$4 ; exit }"
-    )"
+  )"
   local version="$(awk -F / '{print $8}' <<< "$url" | grep -o '[0-9\.]+')"
-  curl -SL# "$url" \
+  curl -L# "$url" \
     | tar --no-same-owner --strip-components=2 -xzvC "$HOME/bin" \
         "hub-${arch}-${version}/bin/hub"
 }
@@ -102,7 +115,7 @@ get__jq () {
     curl -sSL https://api.github.com/repos/stedolan/jq/releases \
       | awk -F \" "/browser_download_url.*${arch}/{ print \$4 ; exit }"
     )"
-  curl -SL# -o "$HOME/bin/jq" "$url"
+  curl -L# -o "$HOME/bin/jq" "$url"
   chmod a+x "$HOME/bin/jq"
 }
 
@@ -116,7 +129,7 @@ get__lnav () {
     curl -sSL https://api.github.com/repos/tstack/lnav/releases \
       | awk -F \" "/browser_download_url.*${arch}.zip/{ print \$4 ; exit }"
     )"
-  curl -SL# -o /tmp/lnav.zip "$url" || return
+  curl -L# -o /tmp/lnav.zip "$url" || return
   unzip -oj \
     /tmp/lnav.zip \
     *lnav \
@@ -125,9 +138,8 @@ get__lnav () {
 }
 
 get__massren () {
-  local GOPATH="$HOME"
-  go get -v -u github.com/laurent22/massren
-  go install github.com/laurent22/massren
+  go get -v -u github.com/laurent22/massren || return
+  cp -v ~/go/bin/massren ~/bin/massren
 }
 
 get__morpheus () {
@@ -158,12 +170,12 @@ get__morpheus () {
     name="${pkg##*/}"
     name="${name%%%*}"
     echo "Installing $name"
-    curl -SL# "$pkg" | tar --no-same-owner -xzC "$morpheus_dir"
+    curl -L# "$pkg" | tar --no-same-owner -xzC "$morpheus_dir"
   done
 }
 
 get__ni () {
-  curl -SL# https://github.com/spencertipping/ni/archive/develop.tar.gz \
+  curl -L# https://github.com/spencertipping/ni/archive/develop.tar.gz \
     | tar --no-same-owner -xzvC "$HOME/bin/"
   ln -sv "$HOME/bin/ni-develop/ni" "$HOME/bin/ni"
 }
@@ -171,7 +183,7 @@ get__ni () {
 get__nms () {
   local build_dir="$(mktemp -d)"
   cd "$build_dir"
-  curl -SL# https://github.com/bartobri/no-more-secrets/archive/master.tar.gz \
+  curl -L# https://github.com/bartobri/no-more-secrets/archive/master.tar.gz \
     | tar --no-same-owner --strip-components=1 -xz
   make
   cp bin/nms "$HOME/bin/"
@@ -195,13 +207,13 @@ get__parallel () {
         "${base}src/parcat" \
         "${base}src/parset" \
         "${base}src/sem" \
-        "${base}src/sql" 
+        "${base}src/sql"
 }
 
 get__progress () {
   local build_dir="$(mktemp -d)"
   cd "$build_dir"
-  curl -SL# https://github.com/Xfennec/progress/archive/master.tar.gz \
+  curl -L# https://github.com/Xfennec/progress/archive/master.tar.gz \
     | tar --no-same-owner --strip-components=1 -xz
   make
   cp -v progress "$HOME/bin/progress"
@@ -210,25 +222,24 @@ get__progress () {
 }
 
 get__pup () {
-  local GOPATH="$HOME"
-  go get -v github.com/ericchiang/pup
-  go install github.com/ericchiang/pup
+  go get -v github.com/ericchiang/pup || return
+  cp -v ~/go/bin/pup ~/bin/pup
 }
 
 get__pyenv () {
   mkdir -vp "$HOME/.pyenv"
-  curl -SL# https://github.com/pyenv/pyenv/archive/master.tar.gz \
+  curl -L# https://github.com/pyenv/pyenv/archive/master.tar.gz \
     | tar --no-same-owner --strip-components=1 -xzvC "$HOME/.pyenv"
   ln -sv "$HOME/.pyenv/bin/pyenv" "$HOME/bin/pyenv"
 }
 
 get__q () {
-  curl -SL# -o "$HOME/bin/q" https://raw.githubusercontent.com/harelba/q/master/bin/q
+  curl -L# -o "$HOME/bin/q" https://raw.githubusercontent.com/harelba/q/master/bin/q
   chmod a+x "$HOME/bin/q"
 }
 
 get__spark () {
-  curl -SL# -o "$HOME/bin/spark" https://raw.githubusercontent.com/holman/spark/master/spark
+  curl -L# -o "$HOME/bin/spark" https://raw.githubusercontent.com/holman/spark/master/spark
   chmod a+x "$HOME/bin/spark"
 }
 
@@ -242,13 +253,12 @@ get__suplemon () {
 }
 
 get__textql () {
-  local GOPATH="$HOME"
   go get -v -u github.com/dinedal/textql/...
   mv ~/go/bin/textql ~/bin/
 }
 
 get__tldr () {
-  curl -SL# -o "$HOME/bin/tldr" https://4e4.win/tldr
+  curl -L# -o "$HOME/bin/tldr" https://4e4.win/tldr
   chmod a+x "$HOME/bin/tldr"
   tldr -u
 }
