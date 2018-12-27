@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 get__ack () {
+  echo "Downloading ack..."
   curl -L# https://beyondgrep.com/ack-2.24-single-file \
     -o "$HOME/bin/ack"
   chmod 0755 ~/bin/ack
@@ -18,11 +19,13 @@ get__adb () {
 }
 
 get__bar () {
+  echo "Downloading bar..."
   curl -L# http://www.theiling.de/downloads/bar-1.4-src.tar.bz2 \
     | tar --no-same-owner --strip-components=1 -xvjC "$HOME/bin" bar-1.4/bar
 }
 
 get__catimg () {
+  echo "Downloading catimg..."
   local url="$(
     curl -sL https://api.github.com/repos/posva/catimg/releases \
       | awk -F \" "/zipball_url/{ print \$4 ; exit }"
@@ -36,6 +39,7 @@ get__catimg () {
 }
 
 get__conspy () {
+  echo "Downloading conspy..."
   local build_dir="/tmp/conspy"
   mkdir -vp "$build_dir"
   curl -L# https://cfhcable.dl.sourceforge.net/project/conspy/conspy-1.14-1/conspy-1.14.tar.gz \
@@ -48,17 +52,20 @@ get__conspy () {
 }
 
 get__dategrep () {
+  echo "Downloading dategrep..."
   local NONINTERACTIVE_TESTING=0
   cpan App::dategrep
 }
 
 get__distribution () {
+  echo "Downloading distribution..."
   curl -L# https://raw.githubusercontent.com/philovivero/distribution/master/distribution.py \
     -o "$HOME/bin/distribution"
   chmod a+x "$HOME/bin/distribution"
 }
 
 get__dupf () {
+  echo "Downloading dupf"
   curl -L# https://downloads.sourceforge.net/project/doubles/Duplicate%20Files%20Finder/0.8.0/dupfinder-0.8.0-source_and_binaries.tar.gz \
     | tar --no-same-owner --strip-components=2 -xzvC "$HOME/bin/" \
       dupfinder-0.8/binary/dupf \
@@ -66,6 +73,7 @@ get__dupf () {
 }
 
 get__ffmpeg () {
+  echo "Downloading ffmpeg"
   subpath="$(
     curl -sSL https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz \
       | tar -tJ | head -n1
@@ -77,6 +85,7 @@ get__ffmpeg () {
 }
 
 get__gosu () {
+  echo "Downloading gosu..."
   case "$(uname -sm)" in
     "Linux x86_64")
       local url="$(
@@ -90,6 +99,7 @@ get__gosu () {
 }
 
 get__hub () {
+  echo "Downloading hub..."
   case $(uname) in
     *inux) local arch=linux-amd64 ;;
     *arwin) local arch=darwin-amd64 ;;
@@ -106,6 +116,7 @@ get__hub () {
 }
 
 get__jq () {
+  echo "Downloading jq..."
   case $(uname) in
     *inux) local arch=linux64 ;;
     *arwin) local arch=osx-amd64 ;;
@@ -120,6 +131,7 @@ get__jq () {
 }
 
 get__lnav () {
+  echo "Downloading lnav..."
   case $(uname) in
     *inux) local arch=linux-64bit ;;
     *arwin) local arch=os-x ;;
@@ -138,11 +150,13 @@ get__lnav () {
 }
 
 get__massren () {
+  echo "Downloading massren..."
   go get -v -u github.com/laurent22/massren || return
   cp -v ~/go/bin/massren ~/bin/massren
 }
 
 get__morpheus () {
+  echo "Downloading morpheus binaries..."
   # echo "Package is disabled" ; return
   local morpheus_dir="$HOME/.morpheus"
   mkdir -vp "$morpheus_dir"
@@ -175,12 +189,14 @@ get__morpheus () {
 }
 
 get__ni () {
+  echo "Downloading ni..."
   curl -L# https://github.com/spencertipping/ni/archive/develop.tar.gz \
     | tar --no-same-owner -xzvC "$HOME/bin/"
   ln -sv "$HOME/bin/ni-develop/ni" "$HOME/bin/ni"
 }
 
 get__nms () {
+  echo "Downloading nms..."
   local build_dir="$(mktemp -d)"
   cd "$build_dir"
   curl -L# https://github.com/bartobri/no-more-secrets/archive/master.tar.gz \
@@ -192,10 +208,12 @@ get__nms () {
 }
 
 get__ohmu () {
+  echo "Downloading ohmu..."
   pip install ohmu --user --upgrade
 }
 
 get__parallel () {
+  echo "Downloading parallel..."
   local url="https://ftp.gnu.org/gnu/parallel/parallel-latest.tar.bz2"
   local base="$(curl -sSL $url | tar -tj | head -n1)"
   curl -SL# "$url" \
@@ -211,6 +229,7 @@ get__parallel () {
 }
 
 get__progress () {
+  echo "Downloading progress..."
   local build_dir="$(mktemp -d)"
   cd "$build_dir"
   curl -L# https://github.com/Xfennec/progress/archive/master.tar.gz \
@@ -222,11 +241,13 @@ get__progress () {
 }
 
 get__pup () {
+  echo "Downloading pup..."
   go get -v github.com/ericchiang/pup || return
   cp -v ~/go/bin/pup ~/bin/pup
 }
 
 get__pyenv () {
+  echo "Downloading pyenv"
   mkdir -vp "$HOME/.pyenv"
   curl -L# https://github.com/pyenv/pyenv/archive/master.tar.gz \
     | tar --no-same-owner --strip-components=1 -xzvC "$HOME/.pyenv"
@@ -234,30 +255,36 @@ get__pyenv () {
 }
 
 get__q () {
+  echo "Downloading q..."
   curl -L# -o "$HOME/bin/q" https://raw.githubusercontent.com/harelba/q/master/bin/q
   chmod a+x "$HOME/bin/q"
 }
 
 get__spark () {
+  echo "Downloading spark..."
   curl -L# -o "$HOME/bin/spark" https://raw.githubusercontent.com/holman/spark/master/spark
   chmod a+x "$HOME/bin/spark"
 }
 
 get__speedtest () {
+  echo "Downloading speedtest..."
   curl -SL# -o "$HOME/bin/speedtest" https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py
   chmod a+x "$HOME/bin/speedtest"
 }
 
 get__suplemon () {
+  echo "Downloading suplemon..."
   sudo pip3 install --upgrade suplemon
 }
 
 get__textql () {
+  echo "Downloading textql..."
   go get -v -u github.com/dinedal/textql/...
   mv ~/go/bin/textql ~/bin/
 }
 
 get__tldr () {
+  echo "Dwonloading tldr..."
   curl -L# -o "$HOME/bin/tldr" https://4e4.win/tldr
   chmod a+x "$HOME/bin/tldr"
   tldr -u
@@ -268,7 +295,6 @@ get_binaries () {
   declare -F | grep -o '(?<=\s)get__\S+' \
     | while read -r func ; do
         hr
-        echo "Running $func"
-        eval $func
+        eval $func || return
       done
 }
