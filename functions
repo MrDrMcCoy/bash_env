@@ -97,7 +97,7 @@ cr () { # Color reader
   esac
 }
 
-ahab () {
+ahab () { # purges all containers and optionally volumes/images from docker
   echo "Removing containers..."
   docker container ls --all | awk '{print $1}' | tail -n +2 \
     | while read -r id ; do
