@@ -2,30 +2,27 @@
 
 get__ack () {
   echo "Downloading ack..."
-  curl -L# https://beyondgrep.com/ack-2.24-single-file \
-    -o "$HOME/bin/ack"
-  chmod 0755 ~/bin/ack
+  local url=$(curl -sL https://beyondgrep.com/install | awk -F '"' '/curl/{print $2; exit}')
+  curl -L# "${url}" -o "$HOME/bin/ack"
+  chmod -v 0755 ~/bin/ack
 }
 
 get__adb () {
-  local ver="$(
-    curl -sSL https://developer.android.com/studio/releases/platform-tools \
-      | grep -iPom1 '(?<=\>)[\d\.]{4,}(?= )' )"
-  echo "Downloading Android platform tools version ${ver}"
-  curl -L# https://dl.google.com/android/repository/platform-tools_r${ver}-linux.zip \
+  echo "Downloading Android platform tools"
+  curl -L# https://dl.google.com/android/repository/platform-tools-latest-linux.zip \
     -o /tmp/adb.zip || return
   unzip -qu /tmp/adb.zip -d ~/bin
   rm -v /tmp/adb.zip
 }
 
 get__bar () {
-  echo "Downloading bar..."
+  echo "Downloading bar, a pure bash progress bar..."
   curl -L# http://www.theiling.de/downloads/bar-1.4-src.tar.bz2 \
-    | tar --no-same-owner --strip-components=1 -xvjC "$HOME/bin" bar-1.4/bar
+    | tar --no-same-owner --strip-components=1 -xjC "$HOME/bin" bar-1.4/bar
 }
 
 get__catimg () {
-  echo "Downloading catimg..."
+  echo "Downloading catimg, a terminal image viewer..."
   local url="$(
     curl -sL https://api.github.com/repos/posva/catimg/releases \
       | awk -F \" "/zipball_url/{ print \$4 ; exit }"
@@ -39,22 +36,31 @@ get__catimg () {
 }
 
 get__conspy () {
-  echo "Downloading conspy..."
-  local build_dir="/tmp/conspy"
-  mkdir -vp "$build_dir"
-  curl -L# https://cfhcable.dl.sourceforge.net/project/conspy/conspy-1.14-1/conspy-1.14.tar.gz \
-    | tar --no-same-owner --strip-components=1 -xzvC "$build_dir"
-  cd "$build_dir"
-  make || return
-  sudo make install
-  cd -
-  rm -rf "$build_dir"
+  echo "Downloading conspy, see what other users are up to on the console..."
+  case "$(uname -sm)" in
+    "Linux x86_64")
+      local build_dir="/tmp/conspy"
+      mkdir -vp "$build_dir"
+      curl -L# https://cfhcable.dl.sourceforge.net/project/conspy/conspy-1.14-1/conspy-1.14.tar.gz \
+        | tar --no-same-owner --strip-components=1 -xzC "$build_dir"
+      cd "$build_dir"
+      make || return
+      sudo make install
+      cd -
+      rm -rf "$build_dir" ;;
+    *)
+      echo "Unsupported platform: $(uname -sm)"
+      return ;;
+  esac
 }
 
 get__dategrep () {
-  echo "Downloading dategrep..."
-  local NONINTERACTIVE_TESTING=0
-  cpan App::dategrep
+  echo "Downloading dategrep, search within log files by date range..."
+  local version=$(
+    curl -sL https://github.com/mdom/dategrep/releases/latest \
+      | awk -F " " '/\<title\>/{print $2; exit}')
+  curl -L# -o "$HOME/bin/dategrep" https://raw.githubusercontent.com/mdom/dategrep/${version}/bin/dategrep
+  chmod a+x "$HOME/bin/dategrep"
 }
 
 get__distribution () {
@@ -64,22 +70,20 @@ get__distribution () {
   chmod a+x "$HOME/bin/distribution"
 }
 
-get__dupf () {
-  echo "Downloading dupf"
-  curl -L# https://downloads.sourceforge.net/project/doubles/Duplicate%20Files%20Finder/0.8.0/dupfinder-0.8.0-source_and_binaries.tar.gz \
-    | tar --no-same-owner --strip-components=2 -xzvC "$HOME/bin/" \
-      dupfinder-0.8/binary/dupf \
-      dupfinder-0.8/binary/dupfgui
+get__duplicates () {
+  echo "Downloading duplicates, a duplicate file finder"
+  go get github.com/mathieuancelin/duplicates
+  cp -v ~/go/bin/duplicates ~/bin/duplicates
 }
 
 get__ffmpeg () {
   echo "Downloading ffmpeg"
   subpath="$(
-    curl -sSL https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz \
+    curl -sL https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz \
       | tar -tJ | head -n1
   )"
   curl -L# https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz \
-    | tar --no-same-owner --strip-components=1 -xvJC "$HOME/bin/" \
+    | tar --no-same-owner --strip-components=1 -xJC "$HOME/bin/" \
       ${subpath}ffmpeg \
       ${subpath}ffprobe
 }
@@ -92,7 +96,8 @@ get__gosu () {
         curl -sSL https://api.github.com/repos/tianon/gosu/releases \
           | awk -F \" "/browser_download_url.*amd64/{ print \$4 ; exit }"
         )"
-      curl -L# "$url" > "$HOME/bin/hub"
+      curl -L# "$url" > "$HOME/bin/gosu"
+      chmod -v a+rx "$HOME/bin/gosu"
     ;;
     *) echo "Unknown platform: $(uname -sm)" ; return ;;
   esac
@@ -106,12 +111,12 @@ get__hub () {
     *) echo "Unknown platform: $(uname)" ; return ;;
   esac
   local url="$(
-    curl -sSL https://api.github.com/repos/github/hub/releases \
+    curl -sL https://api.github.com/repos/github/hub/releases \
       | awk -F \" "/browser_download_url.*${arch}/{ print \$4 ; exit }"
   )"
   local version="$(awk -F / '{print $8}' <<< "$url" | grep -o '[0-9\.]+')"
   curl -L# "$url" \
-    | tar --no-same-owner --strip-components=2 -xzvC "$HOME/bin" \
+    | tar --no-same-owner --strip-components=2 -xzC "$HOME/bin" \
         "hub-${arch}-${version}/bin/hub"
 }
 
@@ -123,7 +128,7 @@ get__jq () {
     *) echo "Unknown platform: $(uname)" ; return ;;
   esac
   local url="$(
-    curl -sSL https://api.github.com/repos/stedolan/jq/releases \
+    curl -sL https://api.github.com/repos/stedolan/jq/releases \
       | awk -F \" "/browser_download_url.*${arch}/{ print \$4 ; exit }"
     )"
   curl -L# -o "$HOME/bin/jq" "$url"
@@ -138,7 +143,7 @@ get__lnav () {
     *) echo "Unknown platform: $(uname)" ; return ;;
   esac
   local url="$(
-    curl -sSL https://api.github.com/repos/tstack/lnav/releases \
+    curl -sL https://api.github.com/repos/tstack/lnav/releases \
       | awk -F \" "/browser_download_url.*${arch}.zip/{ print \$4 ; exit }"
     )"
   curl -L# -o /tmp/lnav.zip "$url" || return
@@ -156,10 +161,7 @@ get__massren () {
 }
 
 get__morpheus () {
-  echo "Downloading morpheus binaries..."
-  # echo "Package is disabled" ; return
-  local morpheus_dir="$HOME/.morpheus"
-  mkdir -vp "$morpheus_dir"
+  local morpheus_dir="$HOME/bin/morpheus"
   local pkgs=(
     http://morpheus.2f30.org/0.0/packages/x86_64/busybox%231.22.1.pkg.tgz
     http://morpheus.2f30.org/0.0/packages/x86_64/curl%237.36.0.pkg.tgz
@@ -180,23 +182,24 @@ get__morpheus () {
     http://morpheus.2f30.org/0.0/packages/x86_64/util-linux%232.24.2.pkg.tgz
     http://morpheus.2f30.org/0.0/packages/x86_64/vim%237.4.pkg.tgz
   )
+  mkdir -vp "$morpheus_dir"
   for pkg in "${pkgs[@]}" ; do
     name="${pkg##*/}"
     name="${name%%%*}"
-    echo "Installing $name"
+    echo "Installing morpheus $name"
     curl -L# "$pkg" | tar --no-same-owner -xzC "$morpheus_dir"
   done
 }
 
 get__ni () {
-  echo "Downloading ni..."
+  echo "Downloading ni data visualizer..."
   curl -L# https://github.com/spencertipping/ni/archive/develop.tar.gz \
-    | tar --no-same-owner -xzvC "$HOME/bin/"
-  ln -sv "$HOME/bin/ni-develop/ni" "$HOME/bin/ni"
+    | tar --no-same-owner -xzC "$HOME/bin/"
+  ln -sfv "$HOME/bin/ni-develop/ni" "$HOME/bin/ni"
 }
 
 get__nms () {
-  echo "Downloading nms..."
+  echo "Downloading nms (no more secrets)..."
   local build_dir="$(mktemp -d)"
   cd "$build_dir"
   curl -L# https://github.com/bartobri/no-more-secrets/archive/master.tar.gz \
@@ -208,16 +211,16 @@ get__nms () {
 }
 
 get__ohmu () {
-  echo "Downloading ohmu..."
-  pip install ohmu --user --upgrade
+  echo "Downloading ohmu disk usage tool..."
+  pip install --user --upgrade ohmu
 }
 
 get__parallel () {
   echo "Downloading parallel..."
   local url="https://ftp.gnu.org/gnu/parallel/parallel-latest.tar.bz2"
-  local base="$(curl -sSL $url | tar -tj | head -n1)"
+  local base="$(curl -sL $url | tar -tj | head -n1)"
   curl -SL# "$url" \
-    | tar --no-same-owner --strip-components=2 -xvjC "$HOME/bin" \
+    | tar --no-same-owner --strip-components=2 -xjC "$HOME/bin" \
         "${base}src/env_parallel" \
         "${base}src/env_parallel.bash" \
         "${base}src/niceload" \
@@ -226,6 +229,20 @@ get__parallel () {
         "${base}src/parset" \
         "${base}src/sem" \
         "${base}src/sql"
+}
+
+get__perl () {
+  echo "Installing Perl..."
+  case "$(uname -sm)" in
+    "Linux x86_64")
+      curl -L# "http://staticperl.schmorp.de/bigperl.bin" > "$HOME/bin/perl"
+      chmod -v a+rx "$HOME/bin/perl" ;;
+    "Darwin x86_64")
+      brew install perl ;;
+    *)
+      echo "Unsupported platform: $(uname -sm)"
+      return ;;
+  esac
 }
 
 get__progress () {
@@ -241,7 +258,7 @@ get__progress () {
 }
 
 get__pup () {
-  echo "Downloading pup..."
+  echo "Downloading pup HTML parser..."
   go get -v github.com/ericchiang/pup || return
   cp -v ~/go/bin/pup ~/bin/pup
 }
@@ -255,8 +272,11 @@ get__pyenv () {
 }
 
 get__q () {
-  echo "Downloading q..."
-  curl -L# -o "$HOME/bin/q" https://raw.githubusercontent.com/harelba/q/master/bin/q
+  echo "Downloading q, a text querying tool..."
+  local version=$(
+    curl -sL https://github.com/harelba/q/releases/latest \
+      | awk -F " " '/\<title\>/{print $2; exit}')
+  curl -L# -o "$HOME/bin/q" https://raw.githubusercontent.com/harelba/q/${version}/bin/q
   chmod a+x "$HOME/bin/q"
 }
 
@@ -268,13 +288,13 @@ get__spark () {
 
 get__speedtest () {
   echo "Downloading speedtest..."
-  curl -SL# -o "$HOME/bin/speedtest" https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py
+  curl -L# -o "$HOME/bin/speedtest" https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py
   chmod a+x "$HOME/bin/speedtest"
 }
 
 get__suplemon () {
-  echo "Downloading suplemon..."
-  sudo pip3 install --upgrade suplemon
+  echo "Downloading suplemon, a curses text editor..."
+  pip install --user --upgrade suplemon
 }
 
 get__textql () {

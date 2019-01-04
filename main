@@ -4,13 +4,14 @@
 export PATH="$(
 tr '\n' ':' << EOF
 $HOME/bin
+$HOME/go/bin
 /usr/local/bin
 /usr/local/sbin
 /usr/bin
 /usr/sbin
 /bin
 /sbin
-$HOME/.morpheus/bin
+$HOME/bin/morpheus
 EOF
 )"
 
@@ -68,4 +69,4 @@ if [ -d "$HOME/.pyenv" ] && which pyenv 2>&1 > /dev/null ; then
 #   logger -st bash_env:osx "ERROR: pyenv is not installed."
 fi
 
-git pull 2>&1 >/dev/null &
+git pull 2>&1 >/dev/null & disown
