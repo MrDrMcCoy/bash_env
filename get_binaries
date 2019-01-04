@@ -4,15 +4,16 @@ get__ack () {
   echo "Downloading ack..."
   local url=$(curl -sL https://beyondgrep.com/install | awk -F '"' '/curl/{print $2; exit}')
   curl -L# "${url}" -o "$HOME/bin/ack"
-  chmod -v 0755 ~/bin/ack
+  chmod 0755 ~/bin/ack
 }
 
 get__adb () {
   echo "Downloading Android platform tools"
   curl -L# https://dl.google.com/android/repository/platform-tools-latest-linux.zip \
     -o /tmp/adb.zip || return
-  unzip -qu /tmp/adb.zip -d ~/bin
-  rm -v /tmp/adb.zip
+  [ -d $HOME/bin/systrace ] && rm -r $HOME/bin/systrace
+  unzip -quj /tmp/adb.zip "platform-tools/*" -d ~/bin
+  rm /tmp/adb.zip
 }
 
 get__bar () {
@@ -32,7 +33,7 @@ get__catimg () {
     /tmp/catimg.zip \
     *catimg \
     -d "$HOME/bin"
-  rm -v /tmp/catimg.zip
+  rm /tmp/catimg.zip
 }
 
 get__conspy () {
@@ -73,7 +74,7 @@ get__distribution () {
 get__duplicates () {
   echo "Downloading duplicates, a duplicate file finder"
   go get github.com/mathieuancelin/duplicates
-  cp -v ~/go/bin/duplicates ~/bin/duplicates
+  cp ~/go/bin/duplicates ~/bin/duplicates
 }
 
 get__ffmpeg () {
@@ -97,7 +98,7 @@ get__gosu () {
           | awk -F \" "/browser_download_url.*amd64/{ print \$4 ; exit }"
         )"
       curl -L# "$url" > "$HOME/bin/gosu"
-      chmod -v a+rx "$HOME/bin/gosu"
+      chmod a+rx "$HOME/bin/gosu"
     ;;
     *) echo "Unknown platform: $(uname -sm)" ; return ;;
   esac
@@ -151,13 +152,13 @@ get__lnav () {
     /tmp/lnav.zip \
     *lnav \
     -d "$HOME/bin"
-  rm -v /tmp/lnav.zip
+  rm /tmp/lnav.zip
 }
 
 get__massren () {
   echo "Downloading massren..."
   go get -v -u github.com/laurent22/massren || return
-  cp -v ~/go/bin/massren ~/bin/massren
+  cp ~/go/bin/massren ~/bin/massren
 }
 
 get__morpheus () {
@@ -195,7 +196,7 @@ get__ni () {
   echo "Downloading ni data visualizer..."
   curl -L# https://github.com/spencertipping/ni/archive/develop.tar.gz \
     | tar --no-same-owner -xzC "$HOME/bin/"
-  ln -sfv "$HOME/bin/ni-develop/ni" "$HOME/bin/ni"
+  ln -sf "$HOME/bin/ni-develop/ni" "$HOME/bin/ni"
 }
 
 get__nms () {
@@ -236,7 +237,7 @@ get__perl () {
   case "$(uname -sm)" in
     "Linux x86_64")
       curl -L# "http://staticperl.schmorp.de/bigperl.bin" > "$HOME/bin/perl"
-      chmod -v a+rx "$HOME/bin/perl" ;;
+      chmod a+rx "$HOME/bin/perl" ;;
     "Darwin x86_64")
       brew install perl ;;
     *)
@@ -252,7 +253,7 @@ get__progress () {
   curl -L# https://github.com/Xfennec/progress/archive/master.tar.gz \
     | tar --no-same-owner --strip-components=1 -xz
   make
-  cp -v progress "$HOME/bin/progress"
+  cp progress "$HOME/bin/progress"
   cd -
   rm -fr "$build_dir"
 }
@@ -260,7 +261,7 @@ get__progress () {
 get__pup () {
   echo "Downloading pup HTML parser..."
   go get -v github.com/ericchiang/pup || return
-  cp -v ~/go/bin/pup ~/bin/pup
+  cp ~/go/bin/pup ~/bin/pup
 }
 
 get__pyenv () {
