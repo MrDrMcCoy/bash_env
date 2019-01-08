@@ -9,10 +9,15 @@ get__ack () {
 
 get__adb () {
   echo "Downloading Android platform tools"
-  curl -L# https://dl.google.com/android/repository/platform-tools-latest-linux.zip \
+  case $(uname) in
+    *inux) local arch=linux ;;
+    *arwin) local arch=darwin ;;
+    *) echo "Unknown platform: $(uname)" ; return ;;
+  esac
+  curl -L# https://dl.google.com/android/repository/platform-tools-latest-${arch}.zip \
     -o /tmp/adb.zip || return
   [ -d $HOME/bin/systrace ] && rm -r $HOME/bin/systrace
-  unzip -quj /tmp/adb.zip "platform-tools/*" -d ~/bin
+  unzip -qujo /tmp/adb.zip "platform-tools/*" -d ~/bin
   rm /tmp/adb.zip
 }
 
