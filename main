@@ -4,20 +4,21 @@
 export PATH="$(
 tr '\n' ':' << EOF
 $HOME/bin
-$HOME/.pyenv/shims
+$HOME/go/bin
 /usr/local/bin
 /usr/local/sbin
 /usr/bin
 /usr/sbin
 /bin
 /sbin
+$HOME/bin/morpheus
 EOF
 )"
 
 # History settings
 HISTCONTROL=ignoredups:ignorespace
-HISTSIZE=1000
-HISTFILESIZE=2000
+HISTSIZE=2000
+HISTFILESIZE=4000
 HISTTIMEFORMAT="%d/%m/%y %T "
 
 # Start SSH agent
@@ -59,10 +60,13 @@ source get_binaries
 # Source extra Mac stuff if on a Mac
 [[ "$(uname)" == 'Darwin' ]] && source "$PWD/osx"
 
+# Load pyenv
 if [ -d "$HOME/.pyenv" ] && which pyenv 2>&1 > /dev/null ; then
+  export PATH="$HOME/.pyenv/bin:$HOME/.pyenv/shims:$PATH"
   eval "$(pyenv init -)"
-else
-logger -s <<< "ERROR pyenv is not installed."
-#  get__pyenv
-#  eval "$(pyenv init -)"
+  eval "$(pyenv virtualenv-init -)"
+# else
+#   logger -st bash_env:osx "ERROR: pyenv is not installed."
 fi
+
+git pull 2>&1 >/dev/null & disown
