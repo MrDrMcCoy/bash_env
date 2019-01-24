@@ -1,5 +1,20 @@
 #!/usr/bin/env bash
 
+portcheck () {
+  local host=${1:-google.com}
+  local port=${2:-80}
+  local proto=${3:-tcp}
+  local timeout=${4:-5}
+  if which timeout; then tcmd="timeout -k 1 ${timeout}"
+  elif which gtimeout; then tcmd="gtimeout -k 1 ${timeout}"
+  else tcmd=""; fi 2>&1 >/dev/null
+  if ${tcmd} bash -c "echo >/dev/${proto}/${host}/${port}"; then
+    echo "$proto connection to port $port is open on $host"
+  else
+    echo "$proto connection to port $port timed out connecting to $host"
+  fi
+}
+
 gitprune () {
   git branch -d $(git branch --merged=master | grep -v master)
   git fetch --prune
@@ -158,7 +173,7 @@ ffv () {
 
 ffc () {
   # Usage: ffc fileglob destfile options
-  for f in $1 ; do 
+  for f in $1 ; do
     echo "file './$f'"
   done \
     | sort \

@@ -70,3 +70,4 @@ if [ -d "$HOME/.pyenv" ] && which pyenv 2>&1 > /dev/null ; then
 fi
 
 git pull 2>&1 >/dev/null & disown
+git submodule update --recursive --remote  2>&1 >/dev/null & disown

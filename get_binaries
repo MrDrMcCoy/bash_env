@@ -41,6 +41,13 @@ get__catimg () {
   rm /tmp/catimg.zip
 }
 
+get__colorize () {
+  echo "Downloading colorize, a Perl script for color-coding piped text..."
+  curl -L# -o ${HOME}/bin/colorize \
+    https://raw.githubusercontent.com/raszi/colorize/master/colorize || return
+  chmod +x ${HOME}/bin/colorize
+}
+
 get__conspy () {
   echo "Downloading conspy, see what other users are up to on the console..."
   case "$(uname -sm)" in
