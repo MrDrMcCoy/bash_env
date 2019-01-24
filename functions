@@ -7,7 +7,8 @@ portcheck () {
   local timeout=${4:-5}
   if which timeout; then tcmd="timeout -k 1 ${timeout}"
   elif which gtimeout; then tcmd="gtimeout -k 1 ${timeout}"
-  else tcmd=""; fi 2>&1 >/dev/null
+  else tcmd=""; >&2 echo "Warning: you do not have timeout installed."
+  fi 2>&1 >/dev/null
   if ${tcmd} bash -c "echo >/dev/${proto}/${host}/${port}"; then
     echo "$proto connection to port $port is open on $host"
   else
