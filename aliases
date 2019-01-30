@@ -3,8 +3,5 @@
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
-alias ssh='ssh -t -o PasswordAuthentication=no -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
-alias lesss='less -RSI +G'
-alias grep="grep --color=auto -P"
 
 [ -x "$HOME/bin/hub" ] && alias git="$HOME/bin/hub"
