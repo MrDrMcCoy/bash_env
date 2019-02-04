@@ -114,6 +114,7 @@ cr () { # Color reader
 }
 
 ahab () { # purges all containers and optionally volumes/images from docker
+  docker system prune -f && return
   echo "Removing containers..."
   docker container ls --all | awk '{print $1}' | tail -n +2 \
     | while read -r id ; do
@@ -123,7 +124,6 @@ ahab () { # purges all containers and optionally volumes/images from docker
   while (($#)) ; do
     case "$1" in
       --volume|-v)
-        shift
         echo "Removing volumes..."
         docker volume ls | awk '{print $2}' | tail -n +2 \
           | while read -r id ; do
@@ -131,7 +131,6 @@ ahab () { # purges all containers and optionally volumes/images from docker
             done
       ;;
       --image|-i)
-        shift
         echo "Removing images..."
         docker image ls | awk '{print $3}' | tail -n +2 \
           | while read -r id ; do
