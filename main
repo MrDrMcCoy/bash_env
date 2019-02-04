@@ -5,6 +5,15 @@ export PATH="$(
 tr '\n' ':' << EOF
 $HOME/bin
 $HOME/go/bin
+/usr/local/opt/coreutils/libexec/gnubin
+/opt/X11/bin
+/opt/local/bin
+/opt/local/sbin
+/opt/bin
+/opt/sbin
+/usr/lib/mit/bin
+/usr/lib/mit/sbin
+/usr/local/Cellar
 /usr/local/bin
 /usr/local/sbin
 /usr/bin
