@@ -114,17 +114,19 @@ cr () { # Color reader
 }
 
 ahab () { # purges all containers and optionally volumes/images from docker
+  [[ $# -gt 0 ]] || echo "ERROR: You must specify an option"
   while (($#)) ; do
     case "$1" in
       --kill|-k)
         echo "Killing containers..."
-        docker ps -aq | while read -r id ; do docker kill $id ; done ;;
-      -*) echo "ERROR" "Option '$1' is not defined." ;;
+        docker ps -aq | while read -r id ; do docker rm -fv $id ; done ;;
+      --prune|-p)
+        echo "Removing volumes and images..."
+        docker system prune --volumes -af ;;
+      -*) echo "ERROR: Option '$1' is not defined." ;;
     esac
     shift
   done
-  echo "Removing volumes and images..."
-  docker system prune --volumes -af
 }
 
 ffv () {
