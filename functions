@@ -118,17 +118,13 @@ ahab () { # purges all containers and optionally volumes/images from docker
     case "$1" in
       --kill|-k)
         echo "Killing containers..."
-        docker container ls --all | awk '{print $1}' | tail -n +2 \
-          | while read -r id ; do
-              docker container kill $id
-              docker container rm $id
-            done ;;
+        docker ps -aq | while read -r id ; do docker kill $id ; done ;;
       -*) echo "ERROR" "Option '$1' is not defined." ;;
     esac
     shift
   done
   echo "Removing volumes and images..."
-  docker system prune -f
+  docker system prune --volumes -af
 }
 
 ffv () {
