@@ -5,7 +5,6 @@ export PATH="$(
 tr '\n' ':' << EOF
 $HOME/bin
 $HOME/go/bin
-$HOME/.local/bin
 /usr/local/opt/coreutils/libexec/gnubin
 /opt/X11/bin
 /opt/local/bin
@@ -21,6 +20,7 @@ $HOME/.local/bin
 /usr/sbin
 /bin
 /sbin
+$HOME/.local/bin
 $HOME/bin/morpheus
 EOF
 )"
