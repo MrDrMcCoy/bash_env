@@ -123,7 +123,7 @@ ahab () { # purges all containers and optionally volumes/images from docker
         docker ps -aq | while read -r id ; do docker rm -fv $id ; done ;;
       --prune|-p)
         echo "Removing volumes and images..."
-        docker system prune --volumes -af ;;
+        docker system prune -af ;;
       -*) echo "ERROR: Option '$1' is not defined." ;;
     esac
     shift
