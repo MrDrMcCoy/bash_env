@@ -5,7 +5,8 @@ portcheck () {
   local port=${2:-80}
   local proto=${3:-tcp}
   local timeout=${4:-5}
-  if which timeout; then tcmd="timeout -k 1 ${timeout}"
+  if which timeout && which apk; then tcmd="timeout -s 9 -t ${timeout}"
+  elif which timeout; then tcmd="timeout -k 1 ${timeout}"
   elif which gtimeout; then tcmd="gtimeout -k 1 ${timeout}"
   else tcmd=""; (>&2 echo "Warning: you do not have timeout installed.")
   fi 2>&1 >/dev/null
