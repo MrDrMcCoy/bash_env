@@ -70,6 +70,8 @@ source get_binaries
 # Source extra Mac stuff if on a Mac
 [[ "$(uname)" == 'Darwin' ]] && source "$PWD/osx"
 
+export GOPATH=$HOME/go
+
 # Load pyenv
 if [ -d "$HOME/.pyenv" ] && which pyenv 2>&1 > /dev/null ; then
   export PATH="$HOME/.pyenv/bin:$HOME/.pyenv/shims:$PATH"

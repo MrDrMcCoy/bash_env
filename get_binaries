@@ -91,14 +91,25 @@ get__duplicates () {
 
 get__ffmpeg () {
   echo "Downloading ffmpeg"
-  subpath="$(
-    curl -sL https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz \
-      | tar -tJ | head -n1
-  )"
-  curl -L# https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz \
-    | tar --no-same-owner --strip-components=1 -xJC "$HOME/bin/" \
-      ${subpath}ffmpeg \
-      ${subpath}ffprobe
+  case "$(uname -sm)" in
+    "Linux x86_64")
+      subpath="$(
+        curl -sL https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-amd64-static.tar.xz \
+          | tar -tJ | head -n1 )"
+      curl -L# https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-amd64-static.tar.xz \
+        | tar --no-same-owner --strip-components=1 -xJC "$HOME/bin/" \
+          ${subpath}ffmpeg \
+          ${subpath}ffprobe \
+    ;;
+    "Darwin x86_64")
+      for exe in ffmpeg ffprobe ffplay; do
+        curl -sSL https://evermeet.cx/ffmpeg/get/${exe} > /tmp/${exe}.7z
+        7z e -y -bd -bb0 -o$HOME/bin /tmp/${exe}.7z
+        rm /tmp/${exe}.7z
+      done
+    ;;
+    *) echo "Unknown platform: $(uname -sm)" ; return ;;
+  esac
 }
 
 get__gosu () {

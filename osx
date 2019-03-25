@@ -2,3 +2,4 @@
 
 export MANPATH=/opt/local/share/man:$MANPATH
 export DISPLAY=:0.0
+export GOROOT=/usr/local/opt/go/libexec
