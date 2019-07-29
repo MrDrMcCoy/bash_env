@@ -5,6 +5,7 @@ export PATH="$(
 tr '\n' ':' << EOF
 $HOME/bin
 $HOME/go/bin
+$HOME/.cargo/bin
 /usr/local/opt/coreutils/libexec/gnubin
 /opt/X11/bin
 /opt/local/bin
@@ -66,6 +67,7 @@ source colors
 source functions
 source options
 source get_binaries
+[ -f ~/.vaultrc ] && source ~/.vaultrc |& logger -t vaultrc
 
 # Source extra Mac stuff if on a Mac
 [[ "$(uname)" == 'Darwin' ]] && source "$PWD/osx"
@@ -81,5 +83,5 @@ if [ -d "$HOME/.pyenv" ] && which pyenv 2>&1 > /dev/null ; then
 #   logger -st bash_env:osx "ERROR: pyenv is not installed."
 fi
 
-git pull 2>&1 >/dev/null & disown
-git submodule update --recursive --remote  2>&1 >/dev/null & disown
+# git pull 2>&1 >/dev/null & disown
+# git submodule update --recursive --remote  2>&1 >/dev/null & disown
