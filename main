@@ -6,7 +6,12 @@ tr '\n' ':' << EOF
 $HOME/bin
 $HOME/go/bin
 $HOME/.cargo/bin
+$HOME/.local/bin
 /usr/local/opt/coreutils/libexec/gnubin
+/usr/local/opt/grep/libexec/gnubin
+/usr/local/opt/gnu-tar/libexec/gnubin
+/usr/local/opt/gnu-sed/libexec/gnubin
+/Users/jmccoy/Library/Python/3.7/bin
 /opt/X11/bin
 /opt/local/bin
 /opt/local/sbin
@@ -21,19 +26,18 @@ $HOME/.cargo/bin
 /usr/sbin
 /bin
 /sbin
-$HOME/.local/bin
 $HOME/bin/morpheus
 EOF
 )"
 
 # History settings
-HISTCONTROL=ignoredups:ignorespace
-HISTSIZE=4000
-HISTFILESIZE=8000
-HISTTIMEFORMAT="%d/%m/%y %T "
+export HISTCONTROL=ignoredups:ignorespace
+export HISTSIZE=4000
+export HISTFILESIZE=8000
+export HISTTIMEFORMAT="%d/%m/%y %T "
 
 # Start SSH agent
-SSH_ENV="$HOME/.ssh/environment"
+export SSH_ENV="$HOME/.ssh/environment"
 start_agent () {
   echo "Initialising new SSH agent..."
   ssh-agent | sed 's/^echo/#echo/' > "${SSH_ENV}"
@@ -75,13 +79,13 @@ source get_binaries
 export GOPATH=$HOME/go
 
 # Load pyenv
-if [ -d "$HOME/.pyenv" ] && which pyenv 2>&1 > /dev/null ; then
-  export PATH="$HOME/.pyenv/bin:$HOME/.pyenv/shims:$PATH"
-  eval "$(pyenv init -)"
-  eval "$(pyenv virtualenv-init -)"
-# else
-#   logger -st bash_env:osx "ERROR: pyenv is not installed."
-fi
+# if [ -d "$HOME/.pyenv" ] && which pyenv 2>&1 > /dev/null ; then
+#   export PATH="$HOME/.pyenv/bin:$HOME/.pyenv/shims:$PATH"
+#   eval "$(pyenv init -)"
+#   eval "$(pyenv virtualenv-init -)"
+# # else
+# #   logger -st bash_env:osx "ERROR: pyenv is not installed."
+# fi
 
 # git pull 2>&1 >/dev/null & disown
 # git submodule update --recursive --remote  2>&1 >/dev/null & disown

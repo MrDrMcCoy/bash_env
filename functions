@@ -1,19 +1,33 @@
 #!/usr/bin/env bash
 
 portcheck () {
+  if [[ $# == 0 ]]; then echo "ERROR: You must specify an option. Try -h for help." ; return ; fi
   local host=${1:-google.com}
   local port=${2:-80}
-  local proto=${3:-tcp}
   local timeout=${4:-5}
-  if which timeout && which apk; then tcmd="timeout -s 9 -t ${timeout}"
-  elif which timeout; then tcmd="timeout -k 1 ${timeout}"
-  elif which gtimeout; then tcmd="gtimeout -k 1 ${timeout}"
-  else tcmd=""; (>&2 echo "Warning: you do not have timeout installed.")
-  fi 2>&1 >/dev/null
-  if ${tcmd} bash -c "echo -n >/dev/${proto}/${host}/${port}"; then
-    echo "$proto connection to port $port is open on $host"
+  local tcmd
+  case "$1" in
+    --help|-h)
+      fold -sw "${COLUMNS:-$(tput cols)}" <<< '
+        portcheck - Checks if ports are open on remote hosts
+
+        Usage:
+            portcheck [host (google.com)] [port (80)] [timeout (5)]
+
+        Examples:
+            $ portcheck
+            $ portcheck adlog1.ap1sfo1.lijit.com 8080 5
+      ' | perl -pe 's/^ {8}//g' ; return ;;
+  esac
+  if command -v timeout && which apk; then tcmd="timeout -s 9 -t ${timeout}"
+  elif command -v timeout; then tcmd="timeout -k 1 ${timeout}"
+  elif command -v gtimeout; then tcmd="gtimeout -k 1 ${timeout}"
+  else (>&2 echo "Warning: you do not have timeout installed.")
+  fi >/dev/null 2>&1
+  if ${tcmd} bash -c "echo -n >/dev/tcp/${host}/${port}"; then
+    echo "Connection to $host on port $port is open"
   else
-    echo "$proto connection to port $port timed out connecting to $host"
+    echo "Connection to $host on port $port timed out"
   fi
 }
 
@@ -22,32 +36,25 @@ gitprune () {
   git fetch --prune
 }
 
-resetadsrv () {
-	for host in "$@" ; do
-    echo -e "\nRestarting ad services on $host"
-    sudo ssh "$host" bash -v <<< "
-      trap exit INT TERM QUIT KILL HUP ERR
-      service syslog-ng restart
-      service nagios-nrpe-server restart
-      service raptor stop
-      service blackbird stop
-      service nginx restart
-      sleep 2
-      service raptor start
-      service blackbird start
-      /usr/share/lijit-podlogging/bin/podlogging restart
-      /usr/share/lijit-headersuite-service/bin/headersuite-service restart
-      iptables-restore < /etc/iptables.rules
-    "
-  done
-}
+flush_swap () {
+  if [[ $# == 0 ]]; then echo "ERROR: You must specify an option. Try -h for help." ; return ; fi
+  case "$1" in
+    --help|-h)
+      fold -sw "${COLUMNS:-$(tput cols)}" <<< '
+        flush_swap - drains swap on one or more remote hosts
 
-resetswap () {
+        Usage:
+            flush_swap [hostname ...]
+
+        Examples:
+            $ flush_swap adlog1.ap1sea1.lijit.com adlog2.ap1sea1.lijit.com
+            $ flush_swap root@ad{1..16}.ap{1..4}sfo1.lijit.com
+      ' | perl -pe 's/^ {8}//g' ; return ;;
+  esac
   for host in "$@" ; do
-    echo -e "\nResetting swap on $host"
-    ssh "$host" bash -v <<< '
+    echo -e "\nFlushing swap on $host"
+    ssh -t "$host" bash <<< '
       trap exit INT TERM QUIT KILL HUP ERR
-      service snmpd stop || true
       until [ $(awk "/SwapCached/{print \$2}" /proc/meminfo) = 0 ]; do
         if [ $(awk "/SwapCached/{print \$2}" /proc/meminfo) -lt $(awk "/MemFree/{print \$2}" /proc/meminfo) ]; then
           free -h
@@ -68,12 +75,30 @@ resetswap () {
   done
 }
 
-ntp-update () {
+
+ntp_update () {
+  if [[ $# == 0 ]]; then echo "ERROR: You must specify an option. Try -h for help." ; return ; fi
+  case "$1" in
+    --help|-h)
+      fold -sw "${COLUMNS:-$(tput cols)}" <<< '
+        ntp_update - updates clock via NTP on one or more remote hosts
+
+        Usage:
+            ntp_update [hostname ...]
+
+        Examples:
+            $ ntp_update adlog1.ap1sea1.lijit.com adlog2.ap1sea1.lijit.com
+            $ ntp_update root@ad{1..16}.ap{1..4}sfo1.lijit.com
+      ' | perl -pe 's/^ {8}//g' ; return ;;
+  esac
   for host in "$@" ; do
-    ssh "$1" bash -v <<< '
+    ssh -t "$host" bash -v <<< '
       trap exit INT TERM QUIT KILL HUP ERR
-      service ntp stop ; ntpd -gq ; service ntp start
-      sntp -s 10.106.113.12
+      service ntp stop
+      ntpd -gq
+      service ntp start
+      sntp -s 132.163.97.1
+      date
     '
   done
 }
@@ -83,15 +108,6 @@ setproxy () {
   local port=${2:-3128}
   export http_proxy="http://${host}:${port}"
   export https_proxy="https://${host}:${port}"
-}
-
-oomclear () {
-  for host in "$@" ; do
-    ssh "$1" bash -v <<< '
-      dmesg -c >> /var/log/dmesg
-      free -h
-    '
-  done
 }
 
 flogs () { # find logs and print
@@ -114,21 +130,47 @@ cr () { # Color reader
   esac
 }
 
-ahab () { # purges all containers and optionally volumes/images from docker
-  [[ $# -gt 0 ]] || echo "ERROR: You must specify an option"
+ahab () {
+  [[ $# -gt 0 ]] || echo "ERROR: You must specify an option. Try -h for help."
   while (($#)) ; do
     case "$1" in
+      --help|-h)
+        fold -sw "${COLUMNS:-$(tput cols)}" <<< '
+          ahab - prunes Docker images
+
+          Usage:
+              ahab [options] ...
+
+          Options:
+              --kill
+              -k
+                  Kills running containers and deletes their image and volumes
+              --images
+              -i
+                  Prunes images that are not running
+              --volumes
+              -v
+                  Prunes volumes that are not running
+
+          Examples:
+              $ ahab -i -v
+              $ ahab -k -i -v
+        ' | perl -pe 's/^ {10}//g' ; return ;;
       --kill|-k)
         echo "Killing containers..."
         docker ps -aq | while read -r id ; do docker rm -fv $id ; done ;;
-      --prune|-p)
-        echo "Removing volumes and images..."
+      --images|-i)
+        echo "Removing unused images..."
         docker system prune -af ;;
+      --volumes|-v)
+        echo "Removing unused volumes..."
+        docker volume prune -f ;;
       -*) echo "ERROR: Option '$1' is not defined." ;;
     esac
     shift
   done
 }
+
 
 ffv () {
   # usage: ffv srcfile destdir
@@ -148,7 +190,7 @@ ffv () {
     -c:v libvpx-vp9 \
     -crf 24 \
     -r 24 \
-    -threads 16 \
+    -threads 8 \
     -speed 8 \
     -tile-columns 6 \
     -frame-parallel 1 \
