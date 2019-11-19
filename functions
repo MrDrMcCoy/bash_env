@@ -31,9 +31,37 @@ portcheck () {
   fi
 }
 
-gitprune () {
-  git branch -d $(git branch --merged=master | grep -v master)
-  git fetch --prune
+gpull () {
+  local branch="$(git branch | awk '/*/{print $2}')"
+  if [ "${branch}" = "master" ]; then
+    git pull origin "${branch}"
+    git fetch --prune
+  else
+    git pull origin "${branch}"
+    git pull origin master
+  fi
+}
+
+gpush () {
+  local branch="$(git branch | awk '/*/{print $2}')"
+  local message="${*}"
+  if [ -z "${message}" ]; then
+    echo "ERROR: Commit message empty."
+    return 1
+  fi
+  gpull
+  git commit -am "${message}" || return 1
+  git push origin "${branch}"
+}
+
+aplay () {
+  sudo ansible-playbook -i edi.py --vault-password-file=~/.ansible/ansible_vault_password "${@}"
+}
+
+arun () {
+  cd ~/sovrn-repos/edi/
+  sudo ansible -i edi.py "${@}"
+  cd - >/dev/null
 }
 
 flush_swap () {
@@ -93,7 +121,6 @@ ntp_update () {
   esac
   for host in "$@" ; do
     ssh -t "$host" bash -v <<< '
-      trap exit INT TERM QUIT KILL HUP ERR
       service ntp stop
       ntpd -gq
       service ntp start
@@ -121,6 +148,10 @@ flogs () { # find logs and print
 
 hardreset () {
   for m in s u s b ; do echo $m > /proc/sysrq-trigger ; done
+}
+
+rssh () {
+  until ssh "${@}" exit ; do true ; done ; ssh "${@}"
 }
 
 cr () { # Color reader
@@ -165,12 +196,123 @@ ahab () {
       --volumes|-v)
         echo "Removing unused volumes..."
         docker volume prune -f ;;
-      -*) echo "ERROR: Option '$1' is not defined." ;;
+      *) echo "ERROR: Option '$1' is not defined." ;;
     esac
     shift
   done
 }
 
+singlehop () {
+  # Check for pre-requisites
+  if
+    ! command -v curl > /dev/null
+    ! command -v jq   > /dev/null
+    ! command -v perl > /dev/null
+  then
+    echo "ERROR: please ensure curl, jq, and perl are installed."
+    return
+  fi
+  # Set variables
+  local SH_USER="${SH_USER?Variable is required}" || return
+  local SH_PASS="${SH_PASS?Variable is required}" || return
+  local SH_PIN="${SH_PIN?Variable is required}" || return
+  local SH_ENDPOINT="${SH_ENDPOINT:-dropzone.singlehop.com}"
+  local SH_URL="https://${SH_USER}:${SH_PASS}@${SH_ENDPOINT}"
+  local SH_ACTION="$1"
+  shift
+  case "$SH_ACTION" in
+    *help|-h)
+      fold -sw "${COLUMNS:-$(tput cols)}" <<< '
+        singlehop - commands for singlehop hosts
+
+        Usage:
+            singlehop [action] [hostname]...
+
+        Actions:
+            list
+                Lists all hosts and some details
+            view [hostname] ...
+                Gets details about specified hosts
+            reboot [hostname] ...
+                Hard reboots specified hosts
+            reinstall [hostname] ...
+                Reinstalls OS of specified hosts
+
+        Environment variables:
+            SH_USER = <<< FROM LASTPASS>>> (required)
+            SH_PASS = <<< FROM LASTPASS>>> (required)
+            SH_PIN  = <<< FROM LASTPASS>>> (required)
+            SH_ENDPOINT = dropzone.singlehop.com (optional)
+
+        Examples:
+            $ singlehop list
+            $ singlehop view ad1.ap1ord1.lijit.com
+            $ singlehop reboot cb1.ap2ord1.lijit.com
+            $ singlehop reinstall lb1.ap3ord1.lijit.com
+      ' | perl -pe 's/^ {8}//g' ; return ;;
+    list)
+      echo "Gathering host list from SingleHop..."
+      curl -sS "${SH_URL}/server/list" | jq -Sr .data ;;
+    view)
+      if [ $# = 0 ] ; then
+        echo "ERROR: no hosts specified."
+      else
+        echo "Gathering host list from SingleHop..."
+        local SH_LIST="$(curl -sS "${SH_URL}/server/list")"
+        if ! jq <<< "${SH_LIST}" > /dev/null ; then
+          echo "ERROR: could not retrieve valid host list."
+        else
+          for host in "$@" ; do
+            jq -Ser --arg host "$host" '.data[] | select(.hostname | test ($host))' <<< "${SH_LIST}" \
+              || echo "ERROR: host '$host' not found"
+          done
+        fi
+      fi ;;
+    reboot)
+      if [ $# = 0 ] ; then
+        echo "ERROR: no hosts specified."
+      else
+        echo "Gathering host list from SingleHop..."
+        local SH_LIST="$(curl -sS "${SH_URL}/server/list")"
+        if ! jq <<< "${SH_LIST}" > /dev/null ; then
+          echo "ERROR: could not retrieve valid host list."
+        else
+          for host in "$@" ; do
+            local SH_ID="$(jq -r --arg host "$host" '.data[] | select(.hostname | test ($host)) | .serverid' <<< "${SH_LIST}")"
+            if [ -z "${SH_ID}" ] ; then
+              echo "ERROR: host '$host' not found"
+            else
+              echo "Rebooting $host"
+              curl -sS "${SH_URL}/server/reboot/force/${SH_ID}" \
+                | jq .
+            fi
+          done
+        fi
+      fi ;;
+    reinstall)
+      if [ $# = 0 ] ; then
+        echo "ERROR: no hosts specified."
+      else
+        echo "Gathering host list from SingleHop..."
+        local SH_LIST="$(curl -sS "${SH_URL}/server/list")"
+        if ! jq <<< "${SH_LIST}" > /dev/null ; then
+          echo "ERROR: could not retrieve valid host list."
+        else
+          for host in "$@" ; do
+            local SH_ID="$(jq -r --arg host "$host" '.data[] | select(.hostname | test ($host)) | .serverid' <<< "${SH_LIST}")"
+            if [ -z "${SH_ID}" ] ; then
+              echo "ERROR: host '$host' not found"
+            else
+              echo "Reinstalling OS on $host"
+              curl -sSX POST -d "pin=${SH_PIN}&auto=true" "${SH_URL}/server/reinstall/${SH_ID}" \
+                | jq .data
+            fi
+          done
+        fi
+      fi ;;
+    *) echo "ERROR: Action not specified. Re-run with -h for help." ;;
+  esac
+}
 
 ffv () {
   # usage: ffv srcfile destdir
