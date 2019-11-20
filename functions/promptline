@@ -26,21 +26,22 @@ promptline () {
     local branch="$(awk -F '[ .]' '/##/{print $2}' <<< "${gs}")"
     local ahead="$(grep -o '(?<=ahead )\d+' /dev/stdin <<< "${gs}")"
     local behind="$(grep -o '(?<=behind )\d+' /dev/stdin <<< "${gs}")"
-    local modified="$(grep -ic '^( |d|a|m|r)+' /dev/stdin <<< "${gs}")"
-    local untracked="$(grep -c '^( |\?)+' /dev/stdin <<< "${gs}")"
+    local modified="$(grep -ic '^( |d|a|m|r){2}' /dev/stdin <<< "${gs}")"
+    local untracked="$(grep -c '^( |\?){2}' /dev/stdin <<< "${gs}")"
     echo -en "["
     [ "${cwd}" != "${reponame}" ] && echo -en "\e[1;36m${reponame}\e[0m "
     echo -en "${branch:+\\e[1;35m}${branch}${branch:+\\e[0m}"
+    echo -en "\e[33m"
     [ "${ahead}" = 0 ] || echo -en "${ahead:+ A}${ahead}"
     [ "${behind}" = 0 ] || echo -en "${behind:+ B}${behind}"
     [ "${deleted}" = 0 ] || echo -en "${deleted:+ D}${deleted}"
     [ "${modified}" = 0 ] || echo -en "${modified:+ M}${modified}"
     [ "${untracked}" = 0 ] || echo -en "${untracked:+ U}${untracked}"
-    echo -en "] "
+    echo -en "\e[0m]"
   fi
   # show shell line
   if [ ${EUID} = 0 ] ; then
-    echo -n "\e[1;33m# \e[0m"
+    echo -n "\e[1;31m# \e[0m"
   else
     echo -n "\e[1;32m$ \e[0m"
   fi
