@@ -27,7 +27,6 @@ $HOME/Library/Python/2.7/bin
 /usr/sbin
 /bin
 /sbin
-$HOME/bin/morpheus
 EOF
 )"
 
@@ -37,41 +36,22 @@ export HISTSIZE=4000
 export HISTFILESIZE=8000
 export HISTTIMEFORMAT="%d/%m/%y %T "
 
-# Start SSH agent
-export SSH_ENV="$HOME/.ssh/environment"
-start_agent () {
-  echo "Initialising new SSH agent..."
-  ssh-agent | sed 's/^echo/#echo/' > "${SSH_ENV}"
-  echo succeeded
-  chmod 600 "${SSH_ENV}"
-  source "${SSH_ENV}" > /dev/null
-  ssh-add
-}
-if [ -f "${SSH_ENV}" ]; then
-  source "${SSH_ENV}" > /dev/null
-  ps -ef | grep ${SSH_AGENT_PID} | grep 'ssh-agent$' > /dev/null || { start_agent; }
-elif [[ $- == *i* ]] ; then
-  start_agent;
-fi
-
-# Enable Bash completion
-source "bash-completion/bash_completion"
+# # Enable Bash completion
+# source "bash-completion/bash_completion"
 
 # Set a cooler prompt for git and stuff
-source "bash-git-prompt/gitprompt.sh"
-export GIT_PROMPT_ONLY_IN_REPO=0
-export GIT_PROMPT_THEME="Single_line_Minimalist"
-
-# Source bblib and remove unwanted traps
-source "bblib/bblib.bash"
-trap - INT TERM QUIT HUP EXIT ERR
+# source "bash-git-prompt/gitprompt.sh"
+# export GIT_PROMPT_ONLY_IN_REPO=0
+# export GIT_PROMPT_THEME="Single_line_Minimalist"
 
 # Source my settings
-source aliases
+for a in aliases/* ; do source "${a}" ; done
 source colors
-source functions
+for f in functions/* ; do source "${f}" ; done
 source options
-source get_binaries
+# source get_binaries
+
+# load vault
 [ -f ~/.vaultrc ] && source ~/.vaultrc |& logger -t vaultrc
 
 # Source extra Mac stuff if on a Mac
@@ -79,14 +59,5 @@ source get_binaries
 
 export GOPATH=$HOME/go
 
-# Load pyenv
-# if [ -d "$HOME/.pyenv" ] && which pyenv 2>&1 > /dev/null ; then
-#   export PATH="$HOME/.pyenv/bin:$HOME/.pyenv/shims:$PATH"
-#   eval "$(pyenv init -)"
-#   eval "$(pyenv virtualenv-init -)"
-# # else
-# #   logger -st bash_env:osx "ERROR: pyenv is not installed."
-# fi
-
-# git pull 2>&1 >/dev/null & disown
-# git submodule update --recursive --remote  2>&1 >/dev/null & disown
+unset PROMPT_COMMAND
+PS1='$(promptline)'
