@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+finally () {
+  # Function to perform final tasks before exit
+  # Usage: FINALCMDS+=("command arg")
+  until [[ "${#FINALCMDS[@]}" == 0 ]] ; do
+    ${FINALCMDS[-1]} 2> >(log "ALERT") | log "DEBUG"
+    unset "FINALCMDS[-1]"
+  done
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || finally "$@"

@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+prunner () {
+  # Run commands in parallel
+  # Options:
+  #   -t [threads]
+  #   -c [command to pass arguments to]
+  # Usage:
+  #   prunner "command arg" "command"
+  #   prunner -c gzip *.txt
+  #   find . -maxdepth 1 | prunner -c 'echo found file:' -t 6
+  local -a PQUEUE=()
+  local -i INDEX=0
+  local -i THREADS=4
+  local PCMD=
+  # Process option arguments
+  while (($#)) ; do
+    case "${1}" in
+      --command|-c) shift ; local PCMD="${1}" ;;
+      --threads|-t) shift ; local -i THREADS="${1}" ;;
+      -*) quit "ERROR" "Option '${1}' is not defined." || exit 1 ;;
+      *) PQUEUE+=("${1}") ;;
+    esac
+    shift
+  done
+  # Add lines from stdin to queue
+  if [ ! -t 0 ] ; then
+    while read -r LINE ; do
+      PQUEUE+=("$LINE")
+    done
+  fi
+  set +m
+  while [ ${INDEX} -lt ${#PQUEUE[@]} ] ; do
+    if [ "$(jobs -rp | wc -l)" -lt "${THREADS}" ] ; then
+      echo "Running command $((INDEX+1))/${#PQUEUE[@]}: ${PCMD} ${PQUEUE[$INDEX]}"
+      { ${PCMD} ${PQUEUE[$INDEX]} & } 2>/dev/null
+      ((INDEX++)) || true
+    fi
+  done
+  wait
+  set -m
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || prunner "$@"

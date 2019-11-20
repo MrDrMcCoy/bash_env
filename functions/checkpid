@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+checkpid () {
+  # Check for and maintain pidfile
+  # Usage: checkpid
+  local PIDFILE="${PIDFILE:-${0}.pid}"
+  if [[ $( ps ao args | grep -wc "$(basename "$0")" ) -gt 3 ]] ; then
+    quit "ERROR" "Script '$(basename "$0")' is already running, exiting."
+  else
+    echo "$$" > "${PIDFILE}"
+    FINALCMDS+=("rm -v ${PIDFILE}")
+    log "DEBUG" "PID $$ has no conflicts and has been written to ${PIDFILE}"
+  fi
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || checkpid "$@"

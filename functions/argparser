@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+argparser () {
+  # Accept command-line arguments
+  # Usage: argparser "$@"
+  local OPT=
+  local OPTARG=
+  local OPTIND=
+  [ -n "$*" ] || quit "ERROR" "No arguments were passed."
+  while getopts ":s:hv" OPT ; do
+    case ${OPT} in
+      h) usage ;;
+      s) source "${OPTARG}" ;;
+      v) set -x ; export LOGLEVEL=DEBUG ;;
+      :) quit "ERROR" "Option '-${OPTARG}' requires an argument. For usage, try '${0} -h'." ;;
+      *) quit "ERROR" "Option '-${OPTARG}' is not defined. For usage, try '${0} -h'." ;;
+    esac
+  done
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || argparser "$@"

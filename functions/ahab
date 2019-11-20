@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+ahab () {
+  if [[ $# == 0 ]]; then echo "ERROR: You must specify an option. Try -h for help." ; return ; fi
+  while (($#)) ; do
+    case "$1" in
+      --help|-h)
+        fold -sw "${COLUMNS:-$(tput cols)}" <<< '
+          ahab - prunes Docker images
+
+          Usage:
+              ahab [options] ...
+
+          Options:
+              --kill
+              -k
+                  Kills running containers and deletes their image and volumes
+              --images
+              -i
+                  Prunes images that are not running
+              --volumes
+              -v
+                  Prunes volumes that are not running
+
+          Examples:
+              $ ahab -i -v
+              $ ahab -k -i -v
+        ' | perl -pe 's/^ {10}//g' ; return ;;
+      --kill|-k)
+        echo "Killing containers..."
+        docker ps -aq | while read -r id ; do docker rm -fv $id ; done ;;
+      --images|-i)
+        echo "Removing unused images..."
+        docker system prune -af ;;
+      --volumes|-v)
+        echo "Removing unused volumes..."
+        docker volume prune -f ;;
+      -*) echo "ERROR: Option '$1' is not defined." ;;
+    esac
+    shift
+  done
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || ahab "$@"

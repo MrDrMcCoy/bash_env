@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+ntp_update () {
+  if [[ $# == 0 ]]; then echo "ERROR: You must specify an option. Try -h for help." ; return ; fi
+  case "$1" in
+    --help|-h)
+      fold -sw "${COLUMNS:-$(tput cols)}" <<< '
+        ntp_update - updates clock via NTP on one or more remote hosts
+
+        Usage:
+            ntp_update [hostname ...]
+
+        Examples:
+            $ ntp_update adlog1.ap1sea1.lijit.com adlog2.ap1sea1.lijit.com
+            $ ntp_update root@ad{1..16}.ap{1..4}sfo1.lijit.com
+      ' | perl -pe 's/^ {8}//g' ; return ;;
+  esac
+  for host in "$@" ; do
+    ssh -t "$host" bash -v <<< '
+      service ntp stop
+      ntpd -gq
+      service ntp start
+      sntp -s 132.163.97.1
+      date
+    '
+  done
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || ntp_update "$@"

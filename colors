@@ -3,13 +3,13 @@
 # Colorize
 color_prompt=yes
 
-# Activate colorization for less
-export LESSOPEN="|$PWD/lesspipe/lesspipe.sh %s"
+# # Activate colorization for less
+# export LESSOPEN="|$PWD/lesspipe/lesspipe.sh %s"
 
-# Link colorize config to the expected place
-[ -h "$HOME/.colorizerc" ] || ln -sfv "$PWD/colorize/colorizerc" "$HOME/.colorizerc"
+# # Link colorize config to the expected place
+# [ -h "$HOME/.colorizerc" ] || ln -sfv "$PWD/colorize/colorizerc" "$HOME/.colorizerc"
 
-# Set up color profile
-if eval $(dircolors "$PWD/dircolors/dircolors.256dark") ; then
-  alias ls='ls --color=always'
-fi &> /dev/null
+# # Set up color profile
+# if eval $(dircolors "$PWD/dircolors/dircolors.256dark") ; then
+#   alias ls='ls --color=always'
+# fi &> /dev/null

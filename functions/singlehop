@@ -1,0 +1,122 @@
+#!/usr/bin/env bash
+
+singlehop () {
+  # Check for pre-requisites
+  if
+    ! command -v curl > /dev/null
+    ! command -v jq   > /dev/null
+    ! command -v perl > /dev/null
+  then
+    echo "ERROR: please ensure curl, jq, and perl are installed."
+    return
+  fi
+  # Set variables
+  local SH_USER="${SH_USER?Variable is required}"
+  local SH_PASS="${SH_PASS?Variable is required}"
+  local SH_PIN="${SH_PIN?Variable is required}"
+  local SH_OSID="${SH_OSID}"
+  local SH_ENDPOINT="${SH_ENDPOINT:-dropzone.singlehop.com}"
+  local SH_URL="https://${SH_USER}:${SH_PASS}@${SH_ENDPOINT}"
+  local SH_ACTION="$1"
+  shift
+  read -p "You have requested $SH_ACTION for the following hosts:
+$(echo "$@"|tr ' ' '\n')
+Is this what you want? (y/N) # " proceed
+  [[ "${proceed}" =~ [yY] ]] || return
+  case "$SH_ACTION" in
+    *help|-h)
+      fold -sw "${COLUMNS:-$(tput cols)}" <<< '
+        singlehop - commands for singlehop hosts
+
+        Usage:
+            singlehop [action] [hostname]...
+
+        Actions:
+            list
+                Lists all hosts and some details
+            view [hostname] ...
+                Gets details about specified hosts
+            reboot [hostname] ...
+                Hard reboots specified hosts
+            reinstall [hostname] ...
+                Reinstalls OS of specified hosts
+
+        Environment variables:
+            SH_USER = <<< FROM LASTPASS>>> (required)
+            SH_PASS = <<< FROM LASTPASS>>> (required)
+            SH_PIN  = <<< FROM LASTPASS>>> (required)
+            SH_ENDPOINT = dropzone.singlehop.com (optional)
+            SH_OSID = 652 for 14.04 or 654 for 18.04 (optional)
+
+        Examples:
+            $ singlehop list
+            $ singlehop view ad1.ap1ord1.lijit.com
+            $ singlehop reboot cb1.ap2ord1.lijit.com
+            $ singlehop reinstall lb1.ap3ord1.lijit.com
+      ' | perl -pe 's/^ {8}//g' ; return ;;
+    list)
+      echo "Gathering host list from SingleHop..."
+      curl -sS "${SH_URL}/server/list" | jq -Sr .data ;;
+    view)
+      if [ $# = 0 ] ; then
+        echo "ERROR: no hosts specified."
+      else
+        echo "Gathering host list from SingleHop..."
+        local SH_LIST="$(curl -sS "${SH_URL}/server/list")"
+        if ! jq <<< "${SH_LIST}" > /dev/null ; then
+          echo "ERROR: could not retrieve valid host list."
+        else
+          for host in "$@" ; do
+            jq -Ser --arg host "$host" '.data[] | select(.hostname | test ($host))' <<< "${SH_LIST}" \
+              || echo "ERROR: host '$host' not found"
+          done
+        fi
+      fi ;;
+    reboot)
+      if [ $# = 0 ] ; then
+        echo "ERROR: no hosts specified."
+      else
+        echo "Gathering host list from SingleHop..."
+        local SH_LIST="$(curl -sS "${SH_URL}/server/list")"
+        if ! jq <<< "${SH_LIST}" > /dev/null ; then
+          echo "ERROR: could not retrieve valid host list."
+        else
+          for host in "$@" ; do
+            local SH_ID="$(jq -r --arg host "$host" '.data[] | select(.hostname | test ($host)) | .serverid' <<< "${SH_LIST}")"
+            if [ -z "${SH_ID}" ] ; then
+              echo "ERROR: host '$host' not found"
+            else
+              echo "Rebooting $host"
+              curl -sS "${SH_URL}/server/reboot/force/${SH_ID}" \
+                | jq .
+            fi
+          done
+        fi
+      fi ;;
+    reinstall)
+      if [ $# = 0 ] ; then
+        echo "ERROR: no hosts specified."
+      else
+        echo "Gathering host list from SingleHop..."
+        local SH_LIST="$(curl -sS "${SH_URL}/server/list")"
+        if ! jq <<< "${SH_LIST}" > /dev/null ; then
+          echo "ERROR: could not retrieve valid host list."
+        else
+          for host in "$@" ; do
+            local SH_ID="$(jq -r --arg host "$host" '.data[] | select(.hostname | test ($host)) | .serverid' <<< "${SH_LIST}")"
+            if [ -z "${SH_ID}" ] ; then
+              echo "ERROR: host '$host' not found"
+            else
+              echo "Reinstalling OS on $host"
+              curl -sSX POST -d "pin=${SH_PIN}&auto=true${SH_OSID+&osid=${SH_OSID}}" "${SH_URL}/server/reinstall/${SH_ID}" \
+                | jq .data
+            fi
+          done
+        fi
+      fi ;;
+    *) echo "ERROR: Action not specified. Re-run with -h for help." ;;
+  esac
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || singlehop "$@"

@@ -3,5 +3,3 @@
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
-
-[ -x "$HOME/bin/hub" ] && alias git="$HOME/bin/hub"

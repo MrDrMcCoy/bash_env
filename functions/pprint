@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+pprint () {
+  # Function to format, line wrap, and print piped text
+  # Options:
+  #   [0-7]|[COLOR]: Prints the ASCII escape code to set color.
+  #   [bold]: Prints the ASCII escape code to set bold.
+  #   [underline]: Prints the ASCII escape code to set underline.
+  #   More info here: http://www.tldp.org/HOWTO/Bash-Prompt-HOWTO/x405.html
+  # Usage:
+  #   command | pprint [options]
+  #   pprint [options] <<< "text"
+  local -i COLUMNS="${COLUMNS:-$(tput cols)}"
+  local PREFIX=
+  while (($#)) ; do
+    case "$1" in
+      0|black) PREFIX+="$(tput setaf 0)" ;;
+      1|red) PREFIX+="$(tput setaf 1)" ;;
+      2|green) PREFIX+="$(tput setaf 2)" ;;
+      3|yellow) PREFIX+="$(tput setaf 3)" ;;
+      4|blue) PREFIX+="$(tput setaf 4)" ;;
+      5|magenta) PREFIX+="$(tput setaf 5)" ;;
+      6|cyan) PREFIX+="$(tput setaf 6)" ;;
+      7|white) PREFIX+="$(tput setaf 7)" ;;
+      8|bold) PREFIX+="$(tput bold)" ;;
+      9|underline) PREFIX+="$(tput smul)" ;;
+      *) quit "CRITICAL" "Option '$1' is not defined." ;;
+    esac
+    shift
+  done
+  fold -sw "${COLUMNS:-80}" <<< "${PREFIX}$(cat /dev/stdin)$(tput sgr0)"
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || pprint "$@"
