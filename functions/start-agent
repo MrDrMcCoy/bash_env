@@ -11,4 +11,4 @@ start-agent () {
   fi
 }
 
-[[ $- == *i* ]] || start-agent
+start-agent
