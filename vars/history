@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# History settings
+export HISTCONTROL=ignoredups:ignorespace
+export HISTSIZE=4000
+export HISTFILESIZE=8000
+export HISTTIMEFORMAT="%d/%m/%y %T "

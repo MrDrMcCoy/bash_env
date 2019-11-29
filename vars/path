@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+# Replace PATH
+export PATH="$(
+tr '\n' ':' << EOF
+$HOME/bin
+$HOME/go/bin
+$HOME/.cargo/bin
+$HOME/.local/bin
+/usr/local/opt/coreutils/libexec/gnubin
+/usr/local/opt/grep/libexec/gnubin
+/usr/local/opt/gnu-tar/libexec/gnubin
+/usr/local/opt/gnu-sed/libexec/gnubin
+$HOME/Library/Python/3.7/bin
+$HOME/Library/Python/2.7/bin
+/opt/X11/bin
+/opt/local/bin
+/opt/local/sbin
+/opt/bin
+/opt/sbin
+/usr/lib/mit/bin
+/usr/lib/mit/sbin
+/usr/local/Cellar
+/usr/local/bin
+/usr/local/sbin
+/usr/bin
+/usr/sbin
+/bin
+/sbin
+EOF
+)"
+
+export GOPATH="$HOME/go"

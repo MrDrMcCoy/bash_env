@@ -5,10 +5,7 @@ export DISPLAY=:0.0
 export GOROOT=/usr/local/opt/go/libexec
 
 # Desktop Programs
-alias fireworks="open -a '/Applications/Adobe Fireworks CS3/Adobe Fireworks CS3.app'"
-alias photoshop="open -a '/Applications/Adobe Photoshop CS3/Adobe Photoshop.app'"
 alias preview="open -a '$PREVIEW'"
-alias xcode="open -a '/Applications/XCode.app'"
 alias filemerge="open -a '/Developer/Applications/Utilities/FileMerge.app'"
 alias safari="open -a safari"
 alias firefox="open -a firefox"
@@ -18,10 +15,6 @@ alias dashcode="open -a dashcode"
 alias f='open -a Finder '
 alias fh='open -a Finder .'
 alias textedit='open -a TextEdit'
-alias hex='open -a "Hex Fiend"'
-alias skype='open -a Skype'
-alias mou='open -a Mou'
-alias subl='open -a Sublime\ Text'
 
 if [ -s /usr/bin/firefox ] ; then
   unalias firefox
