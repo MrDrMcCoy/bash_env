@@ -7,8 +7,8 @@ start-agent () {
   if ! pgrep -q ssh-agent ; then
     ssh-agent | sed '/^echo/d' > "${SSH_ENV}"
     chmod 600 "${SSH_ENV}"
-    source "${SSH_ENV}"
   fi
+  source "${SSH_ENV}"
 }
 
 start-agent

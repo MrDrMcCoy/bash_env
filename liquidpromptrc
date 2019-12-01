@@ -300,6 +300,6 @@ LP_COLORMAP=(
     "$DANGER_RED"
 )
 
-LP_PS1="${LP_ERR}${LP_TIME}${LP_JOBS}${LP_PERM}${LP_PWD}${LP_VENV}${LP_VCS}${LP_MARK}"
+LP_PS1="${LP_ERR}${LP_TIME}${LP_RUNTIME}${LP_JOBS}${LP_PERM}${LP_PWD}${LP_VCS}${LP_SCLS}${LP_VENV}${LP_PROXY}${LP_MARK}"
 
 # vim: set et sts=4 sw=4 tw=120 ft=sh:

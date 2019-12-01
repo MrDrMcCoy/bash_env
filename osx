@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && source "/usr/local/etc/profile.d/bash_completion.sh"
+
 export MANPATH=/opt/local/share/man:$MANPATH
 export DISPLAY=:0.0
 export GOROOT=/usr/local/opt/go/libexec
@@ -12,7 +14,8 @@ alias firefox="open -a firefox"
 alias chrome="open -a google\ chrome"
 alias chromium="open -a chromium"
 alias dashcode="open -a dashcode"
-alias f='open -a Finder '
+alias finder='open -a Finder'
+alias f='open -a Finder'
 alias fh='open -a Finder .'
 alias textedit='open -a TextEdit'
 
@@ -26,18 +29,12 @@ alias grnot='growlnotify -s -t Terminal -m "Done"'
 # Get rid of those pesky .DS_Store files recursively
 alias dsclean='find . -type f -name .DS_Store -delete'
 
-# Track who is listening to your iTunes music
-alias whotunes='lsof -r 2 -n -P -F n -c iTunes -a -i TCP@`hostname`:3689'
-
 # Flush your dns cache
-alias flush='dscacheutil -flushcache'
+alias flushdns='dscacheutil -flushcache'
 
 # Show/hide hidden files (for Mac OS X Mavericks)
 alias showhidden="defaults write com.apple.finder AppleShowAllFiles TRUE"
 alias hidehidden="defaults write com.apple.finder AppleShowAllFiles FALSE"
-
-# From http://apple.stackexchange.com/questions/110343/copy-last-command-in-terminal
-alias copyLastCmd='fc -ln -1 | awk '\''{$1=$1}1'\'' ORS='\'''\'' | pbcopy'
 
 # Use Finder's Quick Look on a file (^C or space to close)
 alias ql='qlmanage -p 2>/dev/null'
@@ -47,5 +44,4 @@ alias mute="osascript -e 'set volume output muted true'"
 alias unmute="osascript -e 'set volume output muted false'"
 
 # Pin to the tail of long commands for an audible alert after long processes
-## curl http://downloads.com/hugefile.zip; lmk
 alias lmk="say 'Process complete.'"
