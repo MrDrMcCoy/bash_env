@@ -1,14 +1,9 @@
 #!/usr/bin/env bash
 
-# Start SSH agent
-export SSH_ENV="$HOME/.ssh/environment"
-
 start-agent () {
-  if ! pgrep -q ssh-agent ; then
-    ssh-agent | sed '/^echo/d' > "${SSH_ENV}"
-    chmod 600 "${SSH_ENV}"
-  fi
-  source "${SSH_ENV}"
+  pgrep -q ssh-agent || ssh-agent -sa "$HOME/.ssh/agent.sock" > /dev/null
+  export SSH_AUTH_SOCK="$HOME/.ssh/agent.sock"
+  export SSH_AGENT_PID="$(pgrep -afo ssh-agent)"
 }
 
 start-agent
