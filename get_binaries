@@ -4,11 +4,7 @@ get__ack () {
   echo "Downloading ack..."
   local url=$(curl -sL https://beyondgrep.com/install | awk -F '"' '/curl/{print $2; exit}')
   curl -L# "${url}" -o "$HOME/bin/ack"
-<<<<<<< HEAD
   chmod 0755 $HOME/bin/ack
-=======
-  chmod 0755 ~/bin/ack
->>>>>>> 4f250c4e5ba0b811b6e51ed4632dc4e29238bb6d
 }
 
 get__adb () {
@@ -21,11 +17,7 @@ get__adb () {
   curl -L# https://dl.google.com/android/repository/platform-tools-latest-${arch}.zip \
     -o /tmp/adb.zip || return
   [ -d $HOME/bin/systrace ] && rm -r $HOME/bin/systrace
-<<<<<<< HEAD
   unzip -qujo /tmp/adb.zip "platform-tools/*" -d $HOME/bin
-=======
-  unzip -qujo /tmp/adb.zip "platform-tools/*" -d ~/bin
->>>>>>> 4f250c4e5ba0b811b6e51ed4632dc4e29238bb6d
   rm /tmp/adb.zip
 }
 
@@ -47,7 +39,6 @@ get__catimg () {
     *catimg \
     -d "$HOME/bin"
   rm /tmp/catimg.zip
-<<<<<<< HEAD
 }
 
 get__colorize () {
@@ -55,8 +46,6 @@ get__colorize () {
   curl -L# -o ${HOME}/bin/colorize \
     https://raw.githubusercontent.com/raszi/colorize/master/colorize || return
   chmod +x ${HOME}/bin/colorize
-=======
->>>>>>> 4f250c4e5ba0b811b6e51ed4632dc4e29238bb6d
 }
 
 get__conspy () {
@@ -97,16 +86,11 @@ get__distribution () {
 get__duplicates () {
   echo "Downloading duplicates, a duplicate file finder"
   go get github.com/mathieuancelin/duplicates
-<<<<<<< HEAD
   cp $HOME/go/bin/duplicates $HOME/bin/duplicates
-=======
-  cp ~/go/bin/duplicates ~/bin/duplicates
->>>>>>> 4f250c4e5ba0b811b6e51ed4632dc4e29238bb6d
 }
 
 get__ffmpeg () {
   echo "Downloading ffmpeg"
-<<<<<<< HEAD
   case "$(uname -sm)" in
     "Linux x86_64")
       subpath="$(
@@ -126,16 +110,6 @@ get__ffmpeg () {
     ;;
     *) echo "Unknown platform: $(uname -sm)" ; return ;;
   esac
-=======
-  subpath="$(
-    curl -sL https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz \
-      | tar -tJ | head -n1
-  )"
-  curl -L# https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz \
-    | tar --no-same-owner --strip-components=1 -xJC "$HOME/bin/" \
-      ${subpath}ffmpeg \
-      ${subpath}ffprobe
->>>>>>> 4f250c4e5ba0b811b6e51ed4632dc4e29238bb6d
 }
 
 get__gosu () {
@@ -207,11 +181,7 @@ get__lnav () {
 get__massren () {
   echo "Downloading massren..."
   go get -v -u github.com/laurent22/massren || return
-<<<<<<< HEAD
   cp $HOME/go/bin/massren $HOME/bin/massren
-=======
-  cp ~/go/bin/massren ~/bin/massren
->>>>>>> 4f250c4e5ba0b811b6e51ed4632dc4e29238bb6d
 }
 
 get__morpheus () {
@@ -314,19 +284,15 @@ get__progress () {
 get__pup () {
   echo "Downloading pup HTML parser..."
   go get -v github.com/ericchiang/pup || return
-<<<<<<< HEAD
   cp $HOME/go/bin/pup $HOME/bin/pup
-=======
-  cp ~/go/bin/pup ~/bin/pup
->>>>>>> 4f250c4e5ba0b811b6e51ed4632dc4e29238bb6d
 }
 
 get__pyenv () {
   echo "Downloading pyenv"
   mkdir -vp "$HOME/.pyenv"
   curl -L# https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
-  pyenv install pypy3.5-6.0.0
-  pyenv global pypy3.5-6.0.0
+  # pyenv install pypy3.5-6.0.0
+  # pyenv global pypy3.5-6.0.0
 }
 
 get__q () {
@@ -358,11 +324,7 @@ get__suplemon () {
 get__textql () {
   echo "Downloading textql..."
   go get -v -u github.com/dinedal/textql/...
-<<<<<<< HEAD
   mv $HOME/go/bin/textql $HOME/bin/
-=======
-  mv ~/go/bin/textql ~/bin/
->>>>>>> 4f250c4e5ba0b811b6e51ed4632dc4e29238bb6d
 }
 
 get__tldr () {
