@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-for r in aliases/* functions/* get_binaries options vars/* liquidpromptrc liquidprompt ;do
-# for r in aliases/* functions/* get_binaries options vars/* ; do
+for r in aliases/* functions/* get_binaries options vars/* liquidpromptrc liquidprompt ; do
   source ${r}
 done
 

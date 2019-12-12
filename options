@@ -3,7 +3,7 @@
 # Shell options
 shopt -s autocd # cd to directory by name, without cd
 shopt -s cdspell # autocorrect directory names
-shopt -s checkhash # If set, Bash checks that a command found in the hash table exists before trying to execute it. If a hashed command no longer exists, a normal path search is performed.
+shopt -s checkhash # Checks that a command found in the hash table exists before trying to execute it. If a hashed command no longer exists, a normal path search is performed.
 shopt -s checkjobs # warn about background jobs before exiting
 shopt -s checkwinsize # track window resizes
 shopt -s cmdhist # merge multiline commands in history

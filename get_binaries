@@ -127,6 +127,27 @@ get__gosu () {
   esac
 }
 
+get__gotop () {
+  echo "Downloading gotop..."
+  case "$(uname -sm)" in
+    "Linux x86_64")
+      local url="$(
+        curl -sSL https://api.github.com/repos/cjbassi/gotop/releases \
+          |& awk -F \" "/browser_download_url.*linux_amd64/{ print \$4 ; exit }"
+        )"
+    ;;
+    "Darwin x86_64")
+      local url="$(
+        curl -sSL https://api.github.com/repos/cjbassi/gotop/releases \
+          |& awk -F \" "/browser_download_url.*darwin_amd64/{ print \$4 ; exit }"
+        )"
+    ;;
+    *) echo "Unknown platform: $(uname -sm)" ; return ;;
+  esac
+  curl -L# "$url" > "$HOME/bin/gotop"
+  chmod a+rx "$HOME/bin/gotop"
+}
+
 get__hub () {
   echo "Downloading hub..."
   case $(uname) in
@@ -213,6 +234,11 @@ get__morpheus () {
     echo "Installing morpheus $name"
     curl -L# "$pkg" | tar --no-same-owner -xzC "$morpheus_dir"
   done
+}
+
+get__nanocolors () {
+  echo "Installing syntax highlighting for nano..."
+  curl -sL# https://raw.githubusercontent.com/scopatz/nanorc/master/install.sh | bash
 }
 
 get__ni () {
