@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+quit () {
+  # Function to log a message and exit
+  # Usage: quit [severity] [message] [exitcode]
+  log "${1:-CRITICAL}" "${2:-Exiting without reason}"
+  exit "${3:-3}"
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || quit "$@"

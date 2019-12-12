@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+bash4check () {
+  # Call this function to enable features that depend on bash 4.0+.
+  # Usage: bash4check
+  if [ "${BASH_VERSINFO[0]}" -lt 4 ] ; then
+    quit "ALERT" "Sorry, you need at least bash version 4 to run this function: ${FUNCNAME[1]}"
+  else
+    log "DEBUG" "This script is safe to enable Bash version 4 features"
+  fi
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || bash4check "$@"

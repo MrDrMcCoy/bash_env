@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+ffc () {
+  # Usage: ffc fileglob destfile options
+  for f in $1 ; do
+    echo "file './$f'"
+  done \
+    | sort \
+    | tee ffc
+  ffmpeg \
+    -loglevel error \
+    -stats \
+    -f concat \
+    -safe 0 \
+    -i ffc \
+    -c copy \
+    $3 $2
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || ffc "$@"

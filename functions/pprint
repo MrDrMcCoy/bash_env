@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+
+pprint () {
+  # Function to format, line wrap, and print piped text
+  # Options:
+  #   [color]: Prints the ASCII escape code to set color.
+  #   b[color]: Prints the ASCII escape code to set background color.
+  #   [bold]: Prints the ASCII escape code to set bold.
+  #   [underline]: Prints the ASCII escape code to set underline.
+  #   [blink]: Prints the ASCII escape code to set blinking.
+  #   [highlight]: Prints the ASCII escape code to set reverse background/foreground colors.
+  #   More info here: https://www.shellhacks.com/bash-colors/
+  # Usage:
+  #   command | pprint [options]
+  #   pprint [options] <<< "text"
+  local -i COLUMNS="${COLUMNS:-$(tput cols)}"
+  local prefix=""
+  local suffix="\e[0m"
+  while (($#)) ; do
+    case "$1" in
+      black) prefix+="\e[30m" ;;
+      red) prefix+="\e[31m" ;;
+      green) prefix+="\e[32m" ;;
+      brown) prefix+="\e[33m" ;;
+      blue) prefix+="\e[34m" ;;
+      purple) prefix+="\e[35m" ;;
+      cyan) prefix+="\e[36m" ;;
+      lgray) prefix+="\e[37m" ;;
+      dgray) prefix+="\e[90m" ;;
+      lred) prefix+="\e[91m" ;;
+      lgreen) prefix+="\e[92m" ;;
+      yellow) prefix+="\e[93m" ;;
+      lblue) prefix+="\e[94m" ;;
+      lpurple) prefix+="\e[95m" ;;
+      lcyan) prefix+="\e[96m" ;;
+      white) prefix+="\e[97m" ;;
+
+      bblack) prefix+="\e[40m" ;;
+      bred) prefix+="\e[41m" ;;
+      bgreen) prefix+="\e[42m" ;;
+      bbrown) prefix+="\e[43m" ;;
+      bblue) prefix+="\e[44m" ;;
+      bpurple) prefix+="\e[45m" ;;
+      bcyan) prefix+="\e[46m" ;;
+      blgray) prefix+="\e[47m" ;;
+      bdgray) prefix+="\e[100m" ;;
+      blred) prefix+="\e[101m" ;;
+      blgreen) prefix+="\e[102m" ;;
+      byellow) prefix+="\e[103m" ;;
+      blblue) prefix+="\e[104m" ;;
+      blpurple) prefix+="\e[105m" ;;
+      blcyan) prefix+="\e[106m" ;;
+      bwhite) prefix+="\e[107m" ;;
+
+      bold) prefix+="\e[1m" ;;
+      dim) prefix+="\e[2m" ;;
+      italic) prefix+="\e[3m" ;;
+      underline) prefix+="\e[4m" ;;
+      blink) prefix+="\e[5m" ;;
+      fblink) prefix+="\e[6m" ;;
+      highlight) prefix+="\e[7m" ;;
+      strike) prefix+="\e[9m" ;;
+      framed) prefix+="\e[51m" ;;
+      encircled) prefix+="\e[52m" ;;
+
+      *) quit "CRITICAL" "Option '$1' is not defined." ;;
+    esac
+    shift
+  done
+  echo -e "${prefix}$(cat /dev/stdin)${suffix}" | fold -sw "${COLUMNS:-80}"
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || pprint "$@"

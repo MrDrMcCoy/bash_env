@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+ffv () {
+  # usage: ffv srcfile destdir
+  local SRCFILE="${1##*/}"
+  local DSTFILE="${2:-${SRCFILE%.*}}.webm"
+  local WIDTH=$(ffmpeg -i "$1" |& grep --color=never -Po '\d+(?=x\d+(,| ))')
+  if [ ${WIDTH} -gt 1920 ]; then
+    local SHRINK=",scale=1920:-1"
+  fi
+  echo Converting ${SRCFILE} to ${DSTFILE}
+  ffmpeg \
+    -loglevel error \
+    -stats \
+    -i "${1}" \
+    -b:v 0 \
+    -c:a libopus \
+    -c:v libvpx-vp9 \
+    -crf 24 \
+    -r 24 \
+    -threads 8 \
+    -speed 8 \
+    -tile-columns 6 \
+    -frame-parallel 1 \
+    -strict -2 \
+    -vf hqdn3d${SHRINK:-} \
+    $3 \
+    "${DSTFILE}"
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || ffv "$@"

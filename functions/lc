@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+lc () {
+  # Convert stdin/arguments to lowercase
+  # Usage:
+  #   lc [string]
+  #   command | lc
+  tr "[:upper:]" "[:lower:]" <<< "${@:-$(cat /dev/stdin)}"
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || lc "$@"

@@ -1,25 +1,47 @@
 #!/usr/bin/env bash
 
-# Exports for Homebrew
-export PATH="/usr/local/Cellar:/opt/local/bin:/opt/local/sbin:$PATH"
-
-# Prepend stuff to PATH
-export PATH="$(
-tr '\n' ':' << EOF
-$(tr ':' '\n' <<< "$PATH")
-/opt/X11/bin
-/opt/local/bin
-/opt/local/sbin
-/usr/lib/mit/sbin
-/usr/local/Cellar
-EOF
-)"
+[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && source "/usr/local/etc/profile.d/bash_completion.sh"
 
 export MANPATH=/opt/local/share/man:$MANPATH
 export DISPLAY=:0.0
+export GOROOT=/usr/local/opt/go/libexec
 
-# Colors
-if eval $(gdircolors "$PWD/dircolors/dircolors.256dark") ; then
-  alias ls='gls --color=always'
-  alias grep='pcregrep --color=auto'
+# Desktop Programs
+alias preview="open -a '$PREVIEW'"
+alias filemerge="open -a '/Developer/Applications/Utilities/FileMerge.app'"
+alias safari="open -a safari"
+alias firefox="open -a firefox"
+alias chrome="open -a google\ chrome"
+alias chromium="open -a chromium"
+alias dashcode="open -a dashcode"
+alias finder='open -a Finder'
+alias f='open -a Finder'
+alias fh='open -a Finder .'
+alias textedit='open -a TextEdit'
+
+if [ -s /usr/bin/firefox ] ; then
+  unalias firefox
 fi
+
+# Requires growlnotify, which can be found in the Growl DMG under "Extras"
+alias grnot='growlnotify -s -t Terminal -m "Done"'
+
+# Get rid of those pesky .DS_Store files recursively
+alias dsclean='find . -type f -name .DS_Store -delete'
+
+# Flush your dns cache
+alias flushdns='dscacheutil -flushcache'
+
+# Show/hide hidden files (for Mac OS X Mavericks)
+alias showhidden="defaults write com.apple.finder AppleShowAllFiles TRUE"
+alias hidehidden="defaults write com.apple.finder AppleShowAllFiles FALSE"
+
+# Use Finder's Quick Look on a file (^C or space to close)
+alias ql='qlmanage -p 2>/dev/null'
+
+# Mute/Unmute the system volume. Plays nice with all other volume settings.
+alias mute="osascript -e 'set volume output muted true'"
+alias unmute="osascript -e 'set volume output muted false'"
+
+# Pin to the tail of long commands for an audible alert after long processes
+alias lmk="say 'Process complete.'"

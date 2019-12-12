@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+reset () {
+  for m in s u s b ; do echo $m > /proc/sysrq-trigger ; done
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || reset "$@"

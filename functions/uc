@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+uc () {
+  # Convert stdin/arguments to uppercase
+  # Usage:
+  #   uc [string]
+  #   command | uc
+  tr "[:lower:]" "[:upper:]" <<< "${@:-$(cat /dev/stdin)}"
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || uc "$@"

@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+portcheck () {
+  if [[ $# == 0 ]]; then echo "ERROR: You must specify an option. Try -h for help." ; return ; fi
+  local host=${1:-google.com}
+  local port=${2:-80}
+  local timeout=${4:-5}
+  local tcmd
+  case "$1" in
+    --help|-h)
+      fold -sw "${COLUMNS:-$(tput cols)}" <<< '
+        portcheck - Checks if ports are open on remote hosts
+
+        Usage:
+            portcheck [host (google.com)] [port (80)] [timeout (5)]
+
+        Examples:
+            $ portcheck
+            $ portcheck adlog1.ap1sfo1.lijit.com 8080 5
+      ' | perl -pe 's/^ {8}//g' ; return ;;
+  esac
+  if command -v timeout && which apk; then tcmd="timeout -s 9 -t ${timeout}"
+  elif command -v timeout; then tcmd="timeout -k 1 ${timeout}"
+  elif command -v gtimeout; then tcmd="gtimeout -k 1 ${timeout}"
+  else (>&2 echo "Warning: you do not have timeout installed.")
+  fi >/dev/null 2>&1
+  if ${tcmd} bash -c "echo -n >/dev/tcp/${host}/${port}"; then
+    echo "Connection to $host on port $port is open"
+  else
+    echo "Connection to $host on port $port timed out"
+  fi
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || portcheck "$@"

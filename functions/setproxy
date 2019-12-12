@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+setproxy () {
+  local host=${1:-squid1.dfw2.lijit.com}
+  local port=${2:-3128}
+  export http_proxy="http://${host}:${port}"
+  export https_proxy="https://${host}:${port}"
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || setproxy "$@"

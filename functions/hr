@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+hr () {
+  # Print horizontal rule
+  # Usage: hr [character]
+  local CHARACTER="${1:--}"
+  local CHARACTER="${CHARACTER:0:1}"
+  local -i COLUMNS=${COLUMNS:-$(tput cols)}
+  printf '%*s\n' "${COLUMNS:-80}" '' | tr ' ' "${CHARACTER}"
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || hr "$@"

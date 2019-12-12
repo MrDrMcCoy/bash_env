@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+
+## NOTE: The cursor doesn't wrap properly
+
+promptline () {
+  local lastexit="$?"
+  local prompt=
+  local cwd="$(basename "${PWD}")"
+  # show last exit error code
+  [ ${lastexit} != 0 ] && prompt+="${tred}${lastexit} "
+  # show background jobs
+  [ -z "$(jobs -p)" ] || prompt+="${tpurple}[$(jobs -p | wc -l)] "
+  # show time
+  # prompt+="${twhite}$(date +%H:%M:%S) "
+  prompt+="${twhite}\\t "
+  # show current directory
+  if [ "${PWD}" = "${HOME}" ] ; then
+    prompt+="${tyellow}~ "
+  else
+    prompt+="${tyellow}${cwd} "
+  fi
+  # promptline+="${tyellow}\\W"
+  # show git info
+  local gs="$(git status --porcelain=v2 --ignore-submodules=all -bsu 2>/dev/null)"
+  if [ -n "${gs}" ] ; then
+    local branch="$(awk -F '[ .]' '/##/{print $2}' <<< "${gs}")"
+    local reponame="$(basename "$(git rev-parse --show-toplevel)")"
+    local -i ahead="$(grep -Po '(?<=ahead )\d+' /dev/stdin <<< "${gs}")"
+    local -i behind="$(grep -Po '(?<=behind )\d+' /dev/stdin <<< "${gs}")"
+    local -i modified="$(grep -Pc '^( |d|a|m|r){2}' /dev/stdin <<< "${gs}")"
+    local -i untracked="$(grep -Pc '^( |\?){2}' /dev/stdin <<< "${gs}")"
+    prompt+="${fclear}["
+    [ "${cwd}" != "${reponame}" ] && prompt+="${tcyan}${reponame} "
+    [ -n "${branch}" ] && prompt+="${tpurple}${branch}"
+    prompt+="${tbrown}"
+    [ ${ahead} = 0 ] || prompt+="${ahead:+ A}${ahead}"
+    [ ${behind} = 0 ] || prompt+="${behind:+ B}${behind}"
+    [ ${modified} = 0 ] || prompt+="${modified:+ M}${modified}"
+    [ ${untracked} = 0 ] || prompt+="${untracked:+ U}${untracked}"
+    prompt+="${fclear}] "
+  fi
+  # show shell line
+  # if [ ${EUID} ] ; then
+  #   prompt+="${tlgreen}$ "
+  # else
+  #   prompt+="${tlred}# "
+  # fi
+  # prompt+="${fclear}"
+  prompt+="${tlcyan}\\\$${fclear} "
+  # get length of printable characters
+  local promptlen=$(sed -E 's/\\e\[[^m]+m//g' <<< "${prompt}" | wc -m)
+  # go that location and clear to end of line
+  # prompt+="\e[$((${#prompt}-${promptlen}))C"
+  # prompt+="\e[${promptlen}C"
+  # prompt+="\e[1G\e[${promptlen}G"
+  PS1="${prompt}"
+  PS1="\[\033[G\]${PS1}$( { tput sgr0 || tput me ; } 2>/dev/null )"
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || promptline "$@"

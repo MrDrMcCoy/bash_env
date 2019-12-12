@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+flush_swap () {
+  if [[ $# == 0 ]]; then echo "ERROR: You must specify an option. Try -h for help." ; return ; fi
+  case "$1" in
+    --help|-h)
+      fold -sw "${COLUMNS:-$(tput cols)}" <<< '
+        flush_swap - drains swap on one or more remote hosts
+
+        Usage:
+            flush_swap [hostname ...]
+
+        Examples:
+            $ flush_swap adlog1.ap1sea1.lijit.com adlog2.ap1sea1.lijit.com
+            $ flush_swap root@ad{1..16}.ap{1..4}sfo1.lijit.com
+      ' | perl -pe 's/^ {8}//g' ; return ;;
+  esac
+  for host in "$@" ; do
+    echo -e "\nFlushing swap on $host"
+    ssh -t "$host" bash <<< '
+      trap exit INT TERM QUIT KILL HUP ERR
+      until [ $(awk "/SwapCached/{print \$2}" /proc/meminfo) = 0 ]; do
+        if [ $(awk "/SwapCached/{print \$2}" /proc/meminfo) -lt $(awk "/MemFree/{print \$2}" /proc/meminfo) ]; then
+          free -h
+          echo "Flushing swap..."
+          swapoff -av
+        else
+          free -h
+          echo "Not enough free memory to flush swap."
+        fi
+        sleep 2
+        echo -en "\e[5A"
+      done
+      echo -e "\n"
+      swapon -av
+      free -h
+      echo -e "Swap clear"
+    '
+  done
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || flush_swap "$@"
