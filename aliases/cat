@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 
-command -v bat &>/dev/null && alias cat="bat"
+command -v bat &>/dev/null && \
+  alias cat="bat --style=plain,header --pager='less -LRIFS'"
