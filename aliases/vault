@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+alias vl="vault login -method ldap username=${USER}"
