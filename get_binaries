@@ -260,11 +260,6 @@ get__nms () {
   rm -fr "$build_dir"
 }
 
-get__ohmu () {
-  echo "Downloading ohmu disk usage tool..."
-  pip install --user --upgrade ohmu
-}
-
 get__parallel () {
   echo "Downloading parallel..."
   local url="https://ftp.gnu.org/gnu/parallel/parallel-latest.tar.bz2"
@@ -319,15 +314,6 @@ get__pyenv () {
   curl -L# https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
   # pyenv install pypy3.5-6.0.0
   # pyenv global pypy3.5-6.0.0
-}
-
-get__q () {
-  echo "Downloading q, a text querying tool..."
-  local version=$(
-    curl -sL https://github.com/harelba/q/releases/latest \
-      | awk -F " " '/\<title\>/{print $2; exit}')
-  curl -L# -o "$HOME/bin/q" https://raw.githubusercontent.com/harelba/q/${version}/bin/q
-  chmod a+x "$HOME/bin/q"
 }
 
 get__spark () {
