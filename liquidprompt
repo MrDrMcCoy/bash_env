@@ -1974,6 +1974,6 @@ prompt_OFF()
 }
 
 # By default, sourcing liquidprompt will activate Liquid Prompt
-prompt_on
+# prompt_on
 
 # vim: set et sts=4 sw=4 tw=120 ft=sh:
