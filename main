@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-for r in aliases/* functions/* get_binaries options vars/* liquidpromptrc liquidprompt ; do
+for r in aliases/* functions/* get_binaries options vars/* ; do
   source ${r}
 done
 
@@ -9,6 +9,3 @@ done
 
 # Source extra Mac stuff if on a Mac
 [[ "$(uname)" == 'Darwin' ]] && source "$PWD/osx"
-
-prompt_on
-# PROMPT_COMMAND="promptline"
