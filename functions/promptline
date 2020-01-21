@@ -6,36 +6,28 @@
 ##       you reach the edge of the terminal to reproduce the issue.
 
 promptline () {
+  # declare local variables
   local lastexit="$?"
   local prompt=
-  local cwd="$(basename "${PWD}")"
+  local cwd=
+  local dirprefix=
+  # commit history as we go
+  history -w
   # show last exit error code
   [ ${lastexit} != 0 ] && prompt+="${tred}${lastexit} "
   # show background jobs
   [ -z "$(jobs -p)" ] || prompt+="${tpurple}[$(jobs -p | wc -l)] "
   # show time
-  prompt+="${twhite}\\t "
-  # show directory writability
-  if [ -w "${PWD}" ] ; then
-    prompt+="${tcyan}${tbold}:${fclear}"
-  else
-    prompt+="${tred}${tbold}:${fclear}"
-  fi
-  # show current directory
-  if [ "${PWD}" = "${HOME}" ] ; then
-    prompt+="${tyellow}~ "
-  else
-    prompt+="${tyellow}${cwd} "
-  fi
+  prompt+="${twhite}$(date +%H:%M:%S) "
   # show git info
   local gs="$(git status --porcelain=v2 --ignore-submodules=all -bsu 2>/dev/null)"
   if [ -n "${gs}" ] ; then
     local branch="$(awk -F '[ .]' '/##/{print $2}' <<< "${gs}")"
     local reponame="$(basename "$(git rev-parse --show-toplevel)")"
-    local -i ahead="$(grep -Po '(?<=ahead )\d+' /dev/stdin <<< "${gs}")"
-    local -i behind="$(grep -Po '(?<=behind )\d+' /dev/stdin <<< "${gs}")"
-    local -i modified="$(grep -Pc '^( |d|a|m|r){2}' /dev/stdin <<< "${gs}")"
-    local -i untracked="$(grep -Pc '^( |\?){2}' /dev/stdin <<< "${gs}")"
+    local -i ahead="$(ag -o '(?<=ahead )\d+' /dev/stdin <<< "${gs}")"
+    local -i behind="$(ag -o '(?<=behind )\d+' /dev/stdin <<< "${gs}")"
+    local -i modified="$(ag -c '^( |d|a|m|r){2}' /dev/stdin <<< "${gs}")"
+    local -i untracked="$(ag -c '^( |\?){2}' /dev/stdin <<< "${gs}")"
     prompt+="${twhite}["
     [ "${cwd}" != "${reponame}" ] && prompt+="${tcyan}${reponame} "
     [ -n "${branch}" ] && prompt+="${tpurple}${branch}"
@@ -46,12 +38,34 @@ promptline () {
     [ ${untracked} = 0 ] || prompt+=" U${untracked}"
     prompt+="${twhite}] "
   fi
-  # show shell line
-  if [ ${EUID} ] ; then
-    prompt+="${tlgreen}$ "
+  # get current path
+  if [[ "${PWD}" =~ ${HOME}.* ]] ; then
+    dirprefix="~"
+    cwd="${PWD#${HOME}}"
   else
-    prompt+="${tlred}# "
+    cwd="${PWD}"
   fi
-  prompt+="${fclear}"
+  # chop current path if too long
+  if [ "${#cwd}" -gt "$((COLUMNS-30))" ] ; then
+    dirprefix+="/…/"
+    until [ "${#cwd}" -lt "$((COLUMNS-30))" ] ; do
+      cwd="${cwd#*/}"
+    done
+  fi
+  # add user@host
+  if [ ${EUID} ] ; then
+    prompt+="${tlgreen}$(id -un)${fclear}@${HOSTNAME}"
+  else
+    prompt+="${tlred}$(id -un)${fclear}@${HOSTNAME}"
+  fi
+  # show directory writability
+  if [ -w "${PWD}" ] ; then
+    prompt+="${tcyan}${tbold}:"
+  else
+    prompt+="${tred}${tbold}:"
+  fi
+  # show current path
+  prompt+="${dirprefix}${cwd} "
+  prompt+="${fclear}\\n\$ "
   PS1="${prompt}"
 }

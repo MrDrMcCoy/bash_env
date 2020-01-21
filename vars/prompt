@@ -1,0 +1,2 @@
+#PS1="\t \W \$ "
+PROMPT_COMMAND=promptline

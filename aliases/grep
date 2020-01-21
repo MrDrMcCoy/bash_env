@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 
-command -v ack &>/dev/null && alias grep="ack -S"
+# command -v ack &>/dev/null && alias grep="ack -S"
+# command -v ag &>/dev/null && alias grep="ag"

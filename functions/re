@@ -1,0 +1,61 @@
+#!/bin/bash
+
+re() {
+  ### usage: re [options] [pattern] [paths]
+  ## select regex command
+  local args=()
+  local match=
+  local options=()
+  local paths=()
+  local postcmd=
+  local rcmd=
+
+  while (($#)) ; do
+    if [ -f "${1}" ] ; then
+      paths+=("${1}")
+      shift
+    elif [ -d "${1}" ] ; then
+      paths+=("${1}/**")
+      shift
+    elif [[ "${1}" =~ \-[eE] ]] ; then
+      match="${2}"
+      shift ; shift
+    elif [[ "${1}" =~ \-.+ ]] ; then
+      options+=("${1}")
+      shift
+    else
+      match="${1}"
+      shift
+    fi
+  done
+
+  [ ${#paths[@]} = 0 ] && paths+=("/dev/stdin")
+
+  # if command -v ag ; then
+  #   rcmd=ag
+  # elif command -v ack ; then
+  #   rcmd=ack
+  # elif command -v pcregrep ; then
+  #   rcmd=pcregrep
+  # elif grep -qP '\w+' <<< 'stuff' ; then
+  #   rcmd=grep
+  # elif command -v perl &>/dev/null ; then
+    rcmd=perl
+    if inarray "${options[@]}" "-o" ; then
+      args+=("-0777")
+      match="if (${match}) {print \"\$&\\n\"}"
+    elif [ ${#paths} -gt 1 ]; then
+      match="if (${match}) {print \"\$ARGV: \$. \$_\"}; \$. = 0 if eof"
+    else
+      match="if (${match}) {print \"\$_\"}"
+    fi >/dev/null
+    args+=("-ne")
+    inarray "${options[@]}" "-c" >/dev/null && postcmd+=' | wc -l '
+  # else
+  #   echo "ERROR: No advanced regex tools found."
+  #   return 1
+  # fi 2>/dev/null
+
+  eval ${rcmd} "${args[@]}" "'${match}'" "${paths[@]}" ${postcmd}
+
+}
