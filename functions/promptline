@@ -46,10 +46,10 @@ promptline () {
     cwd="${PWD}"
   fi
   # chop current path if too long
-  if [ "${#cwd}" -gt "$((COLUMNS-30))" ] ; then
-    dirprefix+="/…/"
-    until [ "${#cwd}" -lt "$((COLUMNS-30))" ] ; do
-      cwd="${cwd#*/}"
+  if [ "${#cwd}" -gt "$((COLUMNS-60))" ] ; then
+    dirprefix+="/…"
+    until [ "${#cwd}" -lt "$((COLUMNS-60))" ] ; do
+      cwd="${cwd%/*}"
     done
   fi
   # add user@host
