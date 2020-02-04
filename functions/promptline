@@ -47,9 +47,9 @@ promptline () {
   fi
   # chop current path if too long
   if [ "${#cwd}" -gt "$((COLUMNS-60))" ] ; then
-    dirprefix+="/…"
     until [ "${#cwd}" -lt "$((COLUMNS-60))" ] ; do
       cwd="${cwd%/*}"
+      cwd="${cwd%/*}/…/$(basename "${PWD}")"
     done
   fi
   # add user@host
@@ -65,7 +65,7 @@ promptline () {
     prompt+="${tred}${tbold}:"
   fi
   # show current path
-  prompt+="${dirprefix}${cwd} "
+  prompt+="${dirprefix:-}${cwd} "
   prompt+="${fclear}\\n\$ "
   PS1="${prompt}"
 }

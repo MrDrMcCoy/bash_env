@@ -18,7 +18,7 @@ prunner () {
     case "${1}" in
       --command|-c) shift ; local PCMD="${1}" ;;
       --threads|-t) shift ; local -i THREADS="${1}" ;;
-      -*) quit "ERROR" "Option '${1}' is not defined." || exit 1 ;;
+      -*) quit "ERROR" "Option '${1}' is not defined." || return 1 ;;
       *) PQUEUE+=("${1}") ;;
     esac
     shift
