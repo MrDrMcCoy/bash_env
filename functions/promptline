@@ -49,6 +49,7 @@ promptline () {
   if [ "${#cwd}" -gt "$((COLUMNS-60))" ] ; then
     until [ "${#cwd}" -lt "$((COLUMNS-60))" ] ; do
       cwd="${cwd%/*}"
+      cwd="${cwd%/*}"
       cwd="${cwd%/*}/…/$(basename "${PWD}")"
     done
   fi
