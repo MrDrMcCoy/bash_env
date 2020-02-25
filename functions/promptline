@@ -10,7 +10,6 @@ promptline () {
   local lastexit="$?"
   local prompt=
   local cwd=
-  local dirprefix=
   # commit history as we go
   history -w
   # show last exit error code
@@ -38,10 +37,23 @@ promptline () {
     [ ${untracked} = 0 ] || prompt+=" U${untracked}"
     prompt+="${twhite}] "
   fi
+  # add user@host
+  if [ ${EUID} -gt 1024 ] ; then
+    prompt+="${tlgreen}$(id -un)@${HOSTNAME}"
+  elif [ ${EUID} -gt 0 ] ; then
+    prompt+="${tyellow}$(id -un)@${HOSTNAME}"
+  else
+    prompt+="${tlred}$(id -un)@${HOSTNAME}"
+  fi
+  # show directory writability
+  if [ -w "${PWD}" ] ; then
+    prompt+="${tcyan}${tbold}:"
+  else
+    prompt+="${tred}${tbold}:"
+  fi
   # get current path
   if [[ "${PWD}" =~ ${HOME}.* ]] ; then
-    dirprefix="~"
-    cwd="${PWD#${HOME}}"
+    cwd="~${PWD#${HOME}}"
   else
     cwd="${PWD}"
   fi
@@ -53,20 +65,8 @@ promptline () {
       cwd="${cwd%/*}/…/$(basename "${PWD}")"
     done
   fi
-  # add user@host
-  if [ ${EUID} ] ; then
-    prompt+="${tlgreen}$(id -un)${fclear}@${HOSTNAME}"
-  else
-    prompt+="${tlred}$(id -un)${fclear}@${HOSTNAME}"
-  fi
-  # show directory writability
-  if [ -w "${PWD}" ] ; then
-    prompt+="${tcyan}${tbold}:"
-  else
-    prompt+="${tred}${tbold}:"
-  fi
   # show current path
-  prompt+="${dirprefix:-}${cwd} "
-  prompt+="${fclear}\\n\$ "
+  prompt+="${cwd} "
+  prompt+="${fclear}\\n\\\$ "
   PS1="${prompt}"
 }

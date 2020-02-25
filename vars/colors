@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-fclear="\e[0m"
-
+# regular colors
 tblack="\e[30m"
 tred="\e[31m"
 tgreen="\e[32m"
@@ -19,6 +18,7 @@ tlpurple="\e[95m"
 tlcyan="\e[96m"
 twhite="\e[97m"
 
+# bold colors
 bblack="\e[40m"
 bred="\e[41m"
 bgreen="\e[42m"
@@ -36,6 +36,7 @@ blpurple="\e[105m"
 blcyan="\e[106m"
 bwhite="\e[107m"
 
+# additional attributes
 tbold="\e[1m"
 tdim="\e[2m"
 titalic="\e[3m"
@@ -46,3 +47,6 @@ thighlight="\e[7m"
 tstrike="\e[9m"
 tframed="\e[51m"
 tencircled="\e[52m"
+
+# clear formatting
+fclear="\e[0m"

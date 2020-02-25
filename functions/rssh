@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 rssh () {
+  # Retries ssh connections until ssh exits cleanly
   until ssh "${@}" exit ; do true ; done ; ssh "${@}"
 }
 

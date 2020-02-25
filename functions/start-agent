@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 
 start-agent () {
-  pgrep -af ssh-agent >/dev/null || ssh-agent -sa "$HOME/.ssh/agent.sock" > /dev/null
   export SSH_AUTH_SOCK="$HOME/.ssh/agent.sock"
-  export SSH_AGENT_PID="$(pgrep -afo ssh-agent)"
+  pgrep -af ssh-agent >/dev/null || {
+    rm "${SSH_AUTH_SOCK}"
+    ssh-agent -sa "${SSH_AUTH_SOCK}" > /dev/null
+    export SSH_AGENT_PID="$(pgrep -afo ssh-agent)"
+  }
 }
 
 start-agent

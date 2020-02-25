@@ -2,7 +2,7 @@
 
 finally () {
   # Function to perform final tasks before exit
-  # Usage: FINALCMDS+=("command arg")
+  # Usage: FINALCMDS+=("command arg") ; finally
   until [[ "${#FINALCMDS[@]}" == 0 ]] ; do
     ${FINALCMDS[-1]} 2> >(log "ALERT") | log "DEBUG"
     unset "FINALCMDS[-1]"
