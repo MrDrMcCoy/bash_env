@@ -2,13 +2,14 @@
 
 [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && source "/usr/local/etc/profile.d/bash_completion.sh"
 
-export MANPATH=/opt/local/share/man:$MANPATH
+export CPPFLAGS="-I/usr/local/opt/readline/include"
 export DISPLAY=:0.0
 export GOROOT=/usr/local/opt/go/libexec
+export LDFLAGS="-L/usr/local/opt/readline/lib"
+export MANPATH=/opt/local/share/man:$MANPATH
+export PKG_CONFIG_PATH="/usr/local/opt/readline/lib/pkgconfig"
 
 # Desktop Programs
-alias preview="open -a '$PREVIEW'"
-alias filemerge="open -a '/Developer/Applications/Utilities/FileMerge.app'"
 alias safari="open -a safari"
 alias firefox="open -a firefox"
 alias chrome="open -a google\ chrome"
@@ -17,7 +18,6 @@ alias dashcode="open -a dashcode"
 alias finder='open -a Finder'
 alias f='open -a Finder'
 alias fh='open -a Finder .'
-alias textedit='open -a TextEdit'
 
 if [ -s /usr/bin/firefox ] ; then
   unalias firefox

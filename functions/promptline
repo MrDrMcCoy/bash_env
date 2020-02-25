@@ -58,13 +58,11 @@ promptline () {
     cwd="${PWD}"
   fi
   # chop current path if too long
-  if [ "${#cwd}" -gt "$((COLUMNS-60))" ] ; then
-    until [ "${#cwd}" -lt "$((COLUMNS-60))" ] ; do
-      cwd="${cwd%/*}"
-      cwd="${cwd%/*}"
-      cwd="${cwd%/*}/…/$(basename "${PWD}")"
-    done
-  fi
+  until [ $(($(echo -e "${prompt}" | sed 's/\x1B\[[0-9;]*[JKmsu]//g' | wc -c)+${#cwd})) -lt ${COLUMNS:-80} ] ; do
+    cwd="${cwd/\/…\/$(basename "${PWD}")/}" # remove existing path abbreviation
+    cwd="${cwd%/*}/…/$(basename "${PWD}")" # remove element from end of path and re-add abbreviation
+    [ "${cwd}" = "~/…/$(basename "${PWD}")" ] && break # stop shortening if at minimum cwd
+  done
   # show current path
   prompt+="${cwd} "
   prompt+="${fclear}\\n\\\$ "
