@@ -23,15 +23,15 @@ pm() {
   fi
   case "${task}" in
     i*)
-      ${cmd} ${inflags[@]} "$@"
+      ${cmd} ${inflags[@]} "$@" || return
       eval ${cleanup}
       ;;
     u*)
-      ${cmd} ${inflags[@]} ${upflags[@]} "$@"
+      ${cmd} ${inflags[@]} ${upflags[@]} "$@" || return
       eval ${cleanup}
       ;;
     r*)
-      ${cmd} ${rmflags[@]} "$@"
+      ${cmd} ${rmflags[@]} "$@" || return
       eval ${cleanup}
       ;;
     h*) fold -sw "${COLUMNS:-80}" <<EOF
