@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+
+pm() {
+  local task="${1}"
+  shift
+  if command -v yay ; then
+    local cmd="yay"
+    local cleanup="yay -Yc ; yay --noconfirm -Sc"
+    local rmflags=(-Rsu)
+    local upflags=(--combinedupgrade -Syu)
+    local inflags=(
+      --nocleanmenu
+      --nodiffmenu
+      --noeditmenu
+      --noredownload
+      --norebuild
+      --batchinstall
+      --needed
+    )
+  else
+    echo "ERROR: no supported package managers found."
+    return
+  fi
+  case "${task}" in
+    i*)
+      ${cmd} ${inflags[@]} "$@"
+      eval ${cleanup}
+      ;;
+    u*)
+      ${cmd} ${inflags[@]} ${upflags[@]} "$@"
+      eval ${cleanup}
+      ;;
+    r*)
+      ${cmd} ${rmflags[@]} "$@"
+      eval ${cleanup}
+      ;;
+    h*) fold -sw "${COLUMNS:-80}" <<EOF
+pm: a package manager wrapper
+
+Usage: pm [task] [argument]... [package]...
+
+Tasks:
+    install: install packages
+    upgrade: upgrade packages
+    remove: remove packages
+    help: print this text
+
+Arguments: anything you would normally pass to your system package manager.
+
+pm will set the preferred defaults of the author for each operation, then run a cleanup task at the end of a successful run. Don't like it, don't use it.
+
+Supported package managers:
+  - yay
+
+More features will come eventually.
+EOF
+    ;;
+    *) echo "ERROR: ${task} is not implemented." ;;
+  esac
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || ntp_update "$@"
