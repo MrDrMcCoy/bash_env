@@ -1,2 +1,4 @@
+#!/usr/bin/env bash
+
 #PS1="\t \W \$ "
 PROMPT_COMMAND=promptline

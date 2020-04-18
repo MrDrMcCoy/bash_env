@@ -31,30 +31,17 @@ re() {
 
   [ ${#paths[@]} = 0 ] && paths+=("/dev/stdin")
 
-  # if command -v ag ; then
-  #   rcmd=ag
-  # elif command -v ack ; then
-  #   rcmd=ack
-  # elif command -v pcregrep ; then
-  #   rcmd=pcregrep
-  # elif grep -qP '\w+' <<< 'stuff' ; then
-  #   rcmd=grep
-  # elif command -v perl &>/dev/null ; then
-    rcmd=perl
-    if inarray "${options[@]}" "-o" ; then
-      args+=("-0777")
-      match="if (${match}) {print \"\$&\\n\"}"
-    elif [ ${#paths} -gt 1 ]; then
-      match="if (${match}) {print \"\$ARGV: \$. \$_\"}; \$. = 0 if eof"
-    else
-      match="if (${match}) {print \"\$_\"}"
-    fi >/dev/null
-    args+=("-ne")
-    inarray "${options[@]}" "-c" >/dev/null && postcmd+=' | wc -l '
-  # else
-  #   echo "ERROR: No advanced regex tools found."
-  #   return 1
-  # fi 2>/dev/null
+  rcmd=perl
+  if inarray "${options[@]}" "-o" ; then
+    args+=("-0777")
+    match="if (${match}) {print \"\$&\\n\"}"
+  elif [ ${#paths} -gt 1 ]; then
+    match="if (${match}) {print \"\$ARGV: \$. \$_\"}; \$. = 0 if eof"
+  else
+    match="if (${match}) {print \"\$_\"}"
+  fi >/dev/null
+  args+=("-ne")
+  inarray "${options[@]}" "-c" >/dev/null && postcmd+=' | wc -l '
 
   eval ${rcmd} "${args[@]}" "'${match}'" "${paths[@]}" ${postcmd}
 

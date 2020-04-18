@@ -15,7 +15,7 @@ log () {
   local -i TRACEDEPTH=${TRACEDEPTH:-1} # 0 would be this function, which is not useful
   until [[ ! "${FUNCNAME[$TRACEDEPTH]}" =~ bash4check|quit|log ]] ; do
     # We want to look above these functions as well
-    ((TRACEDEPTH++))
+    ((TRACEDEPTH++)) ||:
   done
   local LOGTAG="${SCRIPT_NAME:-$(basename "$0")} ${FUNCNAME[$TRACEDEPTH]}"
   local -a LOGLEVELS=(EMERGENCY ALERT CRITICAL ERROR WARN NOTICE INFO DEBUG)
@@ -54,4 +54,4 @@ log_alert () { log "ALERT" "$*" ; }
 log_emer () { log "EMERGENCY" "$*" ; }
 
 # This allows the function to be run as a script if this file is executed directly
-[[ $- == *i* ]] || log "$@"
+# [[ $- == *i* ]] || log "$@"

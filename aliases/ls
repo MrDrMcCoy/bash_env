@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 alias ls='ls --color=always'
-alias ll='ls -lhaF'
-alias lr='ls -lhrt'
-alias la='ls -A'
-alias l='ls -CF'
+alias ll='ls -lhaF --color=always'
+alias lr='ls -lhrt --color=always'
+alias la='ls -A --color=always'
+alias l='ls -CF --color=always'

@@ -9,3 +9,5 @@ done
 
 # Source extra Mac stuff if on a Mac
 [[ "$(uname)" == 'Darwin' ]] && source "$PWD/osx"
+
+return 0

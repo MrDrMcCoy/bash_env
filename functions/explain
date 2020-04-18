@@ -22,4 +22,4 @@ explain () {
 }
 
 # This allows the function to be run as a script if this file is executed directly
-[[ $- == *i* ]] || explain "$@"
+# [[ $- == *i* ]] || explain "$@"

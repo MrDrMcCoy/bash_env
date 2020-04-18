@@ -5,7 +5,7 @@ start-agent () {
   pgrep -af ssh-agent >/dev/null || {
     rm "${SSH_AUTH_SOCK}"
     ssh-agent -sa "${SSH_AUTH_SOCK}" > /dev/null
-    export SSH_AGENT_PID="$(pgrep -afo ssh-agent)"
+    export SSH_AGENT_PID="$(pgrep -afo ssh-agent | cut -f1 -d' ')"
   }
 }
 
