@@ -9,14 +9,14 @@ pm() {
     local rmflags=(-Rsu)
     local upflags=(--combinedupgrade -Syu)
     local inflags=(
+      --batchinstall
+      --needed
       --nocleanmenu
       --nodiffmenu
       --noeditmenu
-      --noredownload
       --norebuild
+      --noredownload
       --noremovemake
-      --batchinstall
-      --needed
     )
   else
     echo "ERROR: no supported package managers found."
