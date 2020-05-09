@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+alias brownnoise='play -n synth 00:00 brownnoise'
+alias pinknoise='play -n synth 00:00 pinknoise'
+alias whitenoise='play -n synth 00:00 whitenoise'
