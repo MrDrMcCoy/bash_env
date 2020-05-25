@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 aplay () {
-  sudo ansible-playbook -i edi.py --vault-password-file=~/.ansible/ansible_vault_password "${@}"
+  sudo ansible-playbook -i inventory.yaml --vault-password-file=~/.ansible/ansible_vault_password "${@}"
 }
 
 # This allows the function to be run as a script if this file is executed directly

@@ -14,7 +14,7 @@ ahab () {
           Options:
               --kill
               -k
-                  Kills running containers and deletes their image and volumes
+                  Kills running containers
               --images
               -i
                   Prunes images that are not running

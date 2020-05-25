@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 arun () {
-  cd ~/sovrn-repos/edi/ || return
-  sudo ansible -i edi.py "${@}"
+  cd ~/ansible/ || return
+  sudo ansible -i inventory.yaml "${@}"
   cd - >/dev/null
 }
 
