@@ -4,3 +4,4 @@
 # command -v ag &>/dev/null && alias grep="ag"
 command -v ripgrep &>/dev/null && alias grep="ripgrep --pcre2"
 command -v rg &>/dev/null && alias grep="rg --pcre2"
+alias grep="grep -P"
