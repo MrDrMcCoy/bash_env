@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+rcmd () {
+   # Usage: rcmd [host] [command] ...
+   # If you do not specify remote commands to run, you will be dropped into an interactive root shell.
+   # Setting pass='your_password' with a preceeding whitespace will allow this to work without a password prompt and no record in your shell history.
+   # Requires sshpass. On Mac, you can use this brew command to install it:
+   #   brew install https://raw.githubusercontent.com/kadwanev/bigboybrew/master/Library/Formula/sshpass.rb
+  local host="${1}" ; shift
+  test -t 0 && [ -z "${pass}" ] && read -sp 'Please enter your password: ' pass
+  : ${pass?variable not set}
+  if [ $# -gt 0 ]; then
+    sshpass -p"${pass}" ssh -t "${host}" "sudo -Sp '' bash -c '${@}' <<< '${pass}'"
+  else
+    sshpass -p"${pass}" ssh -t "${host}" "sudo -Sp '' bash -c 'exec < /dev/tty ; bash -i' <<< '${pass}'"
+  fi
+}
