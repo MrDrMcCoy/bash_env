@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+alias htop='sudo htop'
+alias insmod='sudo insmod'
+alias modprobe='sudo modprobe'
+alias radeontop='sudo radeontop'
+alias rmmod='sudo rmmod'
+alias systemctl='sudo systemctl -l --no-pager'
+alias zfs='sudo zfs'
+alias zpool='sudo zpool'
