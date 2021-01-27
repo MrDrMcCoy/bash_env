@@ -11,8 +11,8 @@ ntp_update () {
             ntp_update [hostname ...]
 
         Examples:
-            $ ntp_update adlog1.ap1sea1.lijit.com adlog2.ap1sea1.lijit.com
-            $ ntp_update root@ad{1..16}.ap{1..4}sfo1.lijit.com
+            $ ntp_update user@domain.tld
+            $ ntp_update user@subdomain{1..4}.domain.tld
       ' | perl -pe 's/^ {8}//g' ; return ;;
   esac
   for host in "$@" ; do

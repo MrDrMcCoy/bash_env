@@ -5,10 +5,12 @@ pm() {
   shift
   if command -v yay ; then
     local cmd="yay"
-    local cleanup="yay -Yc ; yay --noconfirm -Sc"
+    local cleanup="yay -Ycc ; yay --noconfirm -Scc"
+    local checkflags=(-Sy)
     local rmflags=(-Rsu)
-    local upflags=(--combinedupgrade -Syu)
-    local inflags=(
+    local upflags=(-u --combinedupgrade)
+    local searchflags=(-Ss)
+    local inflags=(-S
       --batchinstall
       --needed
       --nocleanmenu
@@ -18,11 +20,23 @@ pm() {
       --noredownload
       --noremovemake
     )
+    local panicflags=(
+      --batchinstall
+      --nocleanmenu
+      --nodiffmenu
+      --noeditmenu
+      --rebuildall
+      --redownloadall
+      --removemake
+    )
   else
     echo "ERROR: no supported package managers found."
     return
   fi
   case "${task}" in
+    c*)
+      ${cmd} ${checkflags[@]} "$@" || return
+      ;;
     i*)
       ${cmd} ${inflags[@]} "$@" || return
       eval ${cleanup}
@@ -35,15 +49,25 @@ pm() {
       ${cmd} ${rmflags[@]} "$@" || return
       eval ${cleanup}
       ;;
+    p*)
+      yay -Qq | yay -S ${panicflags[@]} - || return
+      eval ${cleanup}
+      ;;
+    s*)
+      ${cmd} ${searchflags[@]} "$@"
+      ;;
     h*) fold -sw "${COLUMNS:-80}" <<EOF
 pm: a package manager wrapper
 
 Usage: pm [task] [argument]... [package]...
 
 Tasks:
+    check: check for new packages
     install: install packages
     upgrade: upgrade packages
+    panic: reinstall all packages
     remove: remove packages
+    search: searches packages
     help: print this text
 
 Arguments: anything you would normally pass to your system package manager.
@@ -56,9 +80,9 @@ Supported package managers:
 More features will come eventually.
 EOF
     ;;
-    *) echo "ERROR: ${task} is not implemented." ;;
+    *) echo "ERROR: '${task}' is not implemented. Try 'pm help'" ;;
   esac
 }
 
 # This allows the function to be run as a script if this file is executed directly
-# [[ $- == *i* ]] || ntp_update "$@"
+[[ $- == *i* ]] || pm "$@"
