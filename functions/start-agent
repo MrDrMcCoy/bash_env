@@ -2,10 +2,10 @@
 
 start-agent () {
   export SSH_AUTH_SOCK="${HOME}/.ssh/agent.sock"
-  pgrep -af ssh-agent >/dev/null || {
+  ps aux | grep -q ssh-agent || {
     rm "${SSH_AUTH_SOCK}"
     ssh-agent -sa "${SSH_AUTH_SOCK}" > /dev/null
-    export SSH_AGENT_PID="$(pgrep -afo ssh-agent | cut -f1 -d' ')"
+    export SSH_AGENT_PID="$(ps aux | awk '/ssh-agent/{print $1;exit}')"
   }
 }
 

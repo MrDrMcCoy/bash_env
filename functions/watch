@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+command -v watch &>/dev/null ||
+watch(){
+  [[ ${1} =~ --help|-h ]] && {
+    echo "Usage: watch [command] [sleep seconds (default: 2)]"
+    return ; }
+  [[ ${2:-2} =~ [0-9]+ ]] || {
+    echo "Sleep must be an integer."
+    return ; }
+  local cmd="${1?You must specify a command.}"
+  local -i sleep="${2:-2}"
+  while clear ; do {
+      echo -e "$(date) | Every ${sleep}s, do: ${cmd}\n"
+      eval "${cmd}" ; } |
+        cut -c 1-$(tput cols) |
+          head -n $(($(tput lines)-1))
+    sleep "${sleep}" & wait
+  done
+}
+
+# This allows the function to be run as a script if this file is executed directly
+# [[ $- == *i* ]] || watch "$@"
