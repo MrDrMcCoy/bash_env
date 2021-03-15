@@ -5,7 +5,7 @@ start-agent () {
   ps aux | grep -q ssh-agent || {
     rm "${SSH_AUTH_SOCK}"
     ssh-agent -sa "${SSH_AUTH_SOCK}" > /dev/null
-    export SSH_AGENT_PID="$(ps aux | awk '/ssh-agent/{print $1;exit}')"
+    export SSH_AGENT_PID="$(ps aux | awk '/ssh-agent/{print $2;exit}')"
   }
 }
 

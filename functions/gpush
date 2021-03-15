@@ -2,13 +2,8 @@
 
 gpush () {
   local branch="$(git branch | awk '/*/{print $2}')"
-  local message="${*}"
-  if [ -z "${message}" ]; then
-    echo "ERROR: Commit message empty."
-    return 1
-  fi
-  gpull
-  git commit -am "${message}" || return 1
+  gpull || return 1
+  git commit -a
   git push origin "${branch}"
 }
 

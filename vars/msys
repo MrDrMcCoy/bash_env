@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-[ "${MSYSTEM}" = "MINGW64" ] && export MSYS_NO_PATHCONV=1 # workaround for git bash on windows
+[ "${MSYSTEM}" = "MINGW64" ] && export MSYS_NO_PATHCONV="1" # workaround for git bash on windows
 [ "${MSYSTEM}" = "MSYS"    ] && export MSYS2_ARG_CONV_EXCL="*" # workaround for msys2 bash on windows
