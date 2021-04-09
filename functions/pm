@@ -8,10 +8,20 @@ pm() {
     local cleanup="yay -Ycc ; yay --noconfirm -Scc"
     local checkflags=(-Sy)
     local rmflags=(-Rsu)
-    local upflags=(-u --combinedupgrade)
     local searchflags=(-Ss)
     local inflags=(-S
       --batchinstall
+      --needed
+      --nocleanmenu
+      --nodiffmenu
+      --noeditmenu
+      --norebuild
+      --noredownload
+      --noremovemake
+    )
+    local upflags=(-Su
+      --batchinstall
+      --combinedupgrade
       --needed
       --nocleanmenu
       --nodiffmenu
@@ -29,6 +39,42 @@ pm() {
       --redownloadall
       --removemake
     )
+    local panicsearch=(yay -Qq)
+    local panicreinstall=(yay -S)
+  elif command -v zypper ; then
+    local cmd="sudo zypper"
+    local cleanup="sudo zypper clean"
+    local checkflags=(refresh)
+    local searchflags=(--no-refresh search --details)
+    local inflags=(--no-refresh install
+      --allow-unsigned-rpm
+      --allow-vendor-change
+      --auto-agree-with-licenses
+      --download-in-advance
+      --force-resolution
+    )
+    local upflags=(--no-refresh dist-upgrade
+      --allow-vendor-change
+      --auto-agree-with-licenses
+      --download-in-advance
+      --force-resolution
+    )
+    local rmflags=(--no-refresh remove
+      --clean-deps
+      --force-resolution
+    )
+    local panicflags=()
+    local panicsearch=(true)
+    local panicreinstall=(sudo zypper install
+      --force
+      --allow-unsigned-rpm
+      --allow-vendor-change
+      --auto-agree-with-licenses
+      --download-in-advance
+      --force-resolution
+      --no-recommends
+      $(rpm -qa --qf '%{NAME} ')
+    )
   else
     echo "ERROR: no supported package managers found."
     return
@@ -42,7 +88,7 @@ pm() {
       eval ${cleanup}
       ;;
     u*)
-      ${cmd} ${inflags[@]} ${upflags[@]} "$@" || return
+      ${cmd} ${upflags[@]} "$@" || return
       eval ${cleanup}
       ;;
     r*)
@@ -50,7 +96,7 @@ pm() {
       eval ${cleanup}
       ;;
     p*)
-      yay -Qq | yay -S ${panicflags[@]} - || return
+      ${panicsearch[@]} | ${panicreinstall[@]} ${panicflags[@]} - || return
       eval ${cleanup}
       ;;
     s*)
@@ -76,6 +122,7 @@ pm will set the preferred defaults of the author for each operation, then run a 
 
 Supported package managers:
   - yay
+  - zypper
 
 More features will come eventually.
 EOF
