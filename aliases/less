@@ -1,11 +1,7 @@
 #!/usr/bin/env bash
 
-<<<<<<< HEAD
 # if command -v bat &>/dev/null ; then
 #   alias less="bat --style=plain,header --pager='less -LRIFS'"
 # else
 alias less="less -LRIFS"
 # fi
-=======
-alias less="less -LRIFS"
->>>>>>> e4148d12545e490ec4f083a599661142444b8d11
