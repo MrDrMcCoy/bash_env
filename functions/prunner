@@ -33,7 +33,7 @@ prunner () {
   while [ ${INDEX} -lt ${#PQUEUE[@]} ] ; do
     if [ "$(jobs -rp | wc -l)" -lt "${THREADS}" ] ; then
       echo "Running command $((INDEX+1))/${#PQUEUE[@]}: ${PCMD} ${PQUEUE[$INDEX]}"
-      { ${PCMD} ${PQUEUE[$INDEX]} & } 2>/dev/null
+      { ${PCMD} ${PQUEUE[$INDEX]} & }
       ((INDEX++)) || true
     fi
   done
