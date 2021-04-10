@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 
-# command -v ack &>/dev/null && alias grep="ack -S"
-# command -v ag &>/dev/null && alias grep="ag"
-command -v ripgrep &>/dev/null && alias grep="ripgrep --pcre2"
-command -v rg &>/dev/null && alias grep="rg --pcre2"
-alias grep="grep -P"
+if command -v ripgrep >/dev/null
+then alias grep='ripgrep --pcre2'
+elif command -v rg >/dev/null
+then alias grep='rg --pcre2'
+elif grep -Pq '^\d' <<< 90
+then alias grep='grep -P'
+elif grep -Eq '^a|^[0-9]' <<< 90
+then alias grep='grep -E'
+fi

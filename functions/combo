@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+combo(){
+  [[ ${1} =~ help|-h ]] && {
+fold -sw "${COLUMNS:-$(tput cols)}" <<EOF
+Combo: Prints every combination of arguments passed.
+Each combo will be space separated and on its own line.
+
+Usage: combo [item] [item] ..."
+
+Example:
+  combo stuff things ... |
+    while read -r LEFT RIGHT ; do
+      echo "${LEFT} ${RIGHT}"
+    done
+EOF
+return ; }
+  python3 -c "import sys,itertools;[print(c[0],c[1]) for c in itertools.permutations(sys.argv[1:],2)]" "${@}"
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || combo "${@}"

@@ -1,11 +1,20 @@
 #!/usr/bin/env bash
 
 start-agent () {
-  export SSH_AUTH_SOCK="${HOME}/.ssh/agent.sock"
-  pgrep -af ssh-agent >/dev/null || {
+  command -v pgrep >/dev/null || {
+    echo "start-agent() ERROR: pgrep not found" 1>&2
+    return 1
+  }
+  declare -gx SSH_AUTH_SOCK="${HOME}/.ssh/agent.sock"
+  declare -gx SSH_AGENT_PID="$(pgrep -fo "${SSH_AUTH_SOCK}")"
+  [ "${SSH_AGENT_PID}" ] || {
     rm "${SSH_AUTH_SOCK}"
-    ssh-agent -sa "${SSH_AUTH_SOCK}" > /dev/null
-    export SSH_AGENT_PID="$(pgrep -afo ssh-agent | cut -f1 -d' ')"
+    ssh-agent -a "${SSH_AUTH_SOCK}"
+    declare -gx SSH_AGENT_PID="$(pgrep -fo "${SSH_AUTH_SOCK}")"
+    [ "${SSH_AGENT_PID}" ] || {
+      echo "start-agent() ERROR: PID not set for ssh agent" 1>&2
+      return 1
+    }
   }
 }
 
