@@ -18,7 +18,7 @@ promptline () {
   # show git info
   local gs="$(git status --porcelain=v2 --ignore-submodules=all -bsu 2>/dev/null)"
   if [ -n "${gs}" ] ; then
-    local branch="$(awk -F '[ .]' '/##/{print $2}' <<< "${gs}")"
+    local branch="$(awk '/##/{print $2}' <<< "${gs}")"
     local reponame="$(basename "$(git rev-parse --show-toplevel)")"
     local -i ahead="$(grep -oi '(?<=ahead )\d+' <<< "${gs}" || echo 0)"
     local -i behind="$(grep -oi '(?<=behind )\d+' <<< "${gs}" || echo 0)"
@@ -62,6 +62,12 @@ promptline () {
   done
   # show current path
   prompt+="${cwd} "
-  prompt+="${fclear}\\n\\\$ "
+  # end formatting
+  prompt+="${fclear}"
+  # if not enough space, add newline
+  [ ${#prompt} -gt $((COLUMNS-20)) ] && prompt+="\\n"
+  # show user prompt character
+  prompt+="\\\$ "
+  # set bash promptline
   PS1="${prompt}"
 }
