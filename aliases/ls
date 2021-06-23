@@ -1,7 +1,15 @@
 #!/usr/bin/env bash
 
-alias ls='ls --color=always'
-alias ll='ls -lhaF --color=always'
-alias lr='ls -lhrt --color=always'
-alias la='ls -A --color=always'
-alias l='ls -CF --color=always'
+if command -v exa &>/dev/null ; then
+  alias ls="exa"
+  alias ll='exa -laF'
+  alias lr='exa -lrt modified'
+  alias la='exa -a'
+  alias  l='exa -lF'
+else
+  alias ls='ls --color=always'
+  alias ll='ls -lhaF --color=always'
+  alias lr='ls -lhrt --color=always'
+  alias la='ls -A --color=always'
+  alias l='ls -CF --color=always'
+fi

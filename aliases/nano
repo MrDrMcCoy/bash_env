@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# if command -v micro &>/dev/null ; then
+#   alias nano="micro"
+# else
+  alias nano="nano --boldtext --tabstospaces --locking --historylog --trimblanks --positionlog --tabsize=2 --wordbounds --autoindent --linenumbers --mouse --indicator --unix --magic"
+# fi

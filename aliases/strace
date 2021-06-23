@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+command -v etrace &>/dev/null && alias strace="echo 'Use etrace.'"

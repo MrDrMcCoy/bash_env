@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-if command -v ripgrep >/dev/null
-then alias grep='ripgrep --pcre2'
+if command -v rg >/dev/null && rg -q --pcre2 '\d' >/dev/null <<< 90
+ then alias grep='rg --pcre2'
 elif command -v rg >/dev/null
-then alias grep='rg --pcre2'
+  then alias grep='rg'
 elif grep -Pq '^\d' <<< 90
-then alias grep='grep -P'
+  then alias grep='grep --color=auto -P'
 elif grep -Eq '^a|^[0-9]' <<< 90
-then alias grep='grep -E'
+  then alias grep='grep --color=auto -E'
 fi

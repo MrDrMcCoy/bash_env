@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+command -v choose &>/dev/null && alias cut="echo 'Use choose.'"

@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+command -v hyperfine &>/dev/null && alias time="echo 'Use hyperfine.'"

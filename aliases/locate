@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+command -v lolcate &>/dev/null && alias locate="echo 'Use lolcate.'"

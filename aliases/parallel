@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+command -v pueue &>/dev/null && alias parallel="echo 'Use pueue'"

@@ -18,7 +18,7 @@ promptline () {
   # show git info
   local gs="$(git status --porcelain=v2 --ignore-submodules=all -bsu 2>/dev/null)"
   if [ -n "${gs}" ] ; then
-    local branch="$(awk '/##/{print $2}' <<< "${gs}" | sed 's/\.\.\..*//g')"
+    local branch="$(awk '/##/{print $2}' <<< "${gs}" | /usr/bin/sed 's/\.\.\..*//g')"
     local reponame="$(basename "$(git rev-parse --show-toplevel)")"
     local -i ahead="$(grep -oi '(?<=ahead )\d+' <<< "${gs}" || echo 0)"
     local -i behind="$(grep -oi '(?<=behind )\d+' <<< "${gs}" || echo 0)"
@@ -55,7 +55,7 @@ promptline () {
     cwd="${PWD}"
   fi
   # chop current path if too long
-  until [ $(($(echo -e "${prompt}" | sed 's/\x1B\[[0-9;]*[JKmsu]//g' | wc -c)+${#cwd})) -lt ${COLUMNS:-80} ] ; do
+  until [ $(($(echo -e "${prompt}" | /usr/bin/sed 's/\x1B\[[0-9;]*[JKmsu]//g' | wc -c)+${#cwd})) -lt ${COLUMNS:-80} ] ; do
     cwd="${cwd/\/…\/$(basename "${PWD}")/}" # remove existing path abbreviation
     cwd="${cwd%/*}/…/$(basename "${PWD}")" # remove element from end of path and re-add abbreviation
     [ "${cwd}" = "~/…/$(basename "${PWD}")" ] && break # stop shortening if at minimum cwd
@@ -65,7 +65,7 @@ promptline () {
   # end formatting
   prompt+="${fclear}"
   # if not enough space, add newline
-  [ ${#prompt} -gt $((COLUMNS-20)) ] && prompt+="\\n"
+  [ $(tr -dc '[[:print:]]' <<< ${prompt} | wc -m) -gt $((COLUMNS-20)) ] && prompt+="\\n"
   # show user prompt character
   prompt+="\\\$ "
   # set bash promptline
