@@ -4,6 +4,12 @@ for r in aliases/* functions/* get_binaries options vars/* ; do
   source ${r}
 done
 
+if [ -d "${HOME}/.bash_completion.d" ]; then
+  for c in "${HOME}/.bash_completion.d"/*; do
+    source "${c}"
+  done
+fi
+
 # load vault
 [ -f ~/.vaultrc ] && source ~/.vaultrc |& logger -t vaultrc
 
