@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-alias systemctl='sudo systemctl -l --no-pager'
+alias systemctl='systemctl -l --no-pager'
