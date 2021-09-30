@@ -8,21 +8,10 @@ ${HOME}/go/bin
 ${HOME}/.cargo/bin
 ${HOME}/.local/bin
 ${HOME}/node_modules/.bin
-/usr/local/opt/coreutils/libexec/gnubin
-/usr/local/opt/gawk/libexec/gnubin
-/usr/local/opt/grep/libexec/gnubin
-/usr/local/opt/gnu-tar/libexec/gnubin
-/usr/local/opt/gnu-sed/libexec/gnubin
-${HOME}/Library/Python/3.7/bin
-${HOME}/Library/Python/2.7/bin
-/opt/X11/bin
 /opt/local/bin
 /opt/local/sbin
 /opt/bin
 /opt/sbin
-/usr/lib/mit/bin
-/usr/lib/mit/sbin
-/usr/local/Cellar
 /usr/local/bin
 /usr/local/sbin
 /usr/bin
@@ -30,24 +19,38 @@ ${HOME}/Library/Python/2.7/bin
 /bin
 /sbin
 ${HOME}/.krew/bin
-${HOME}/AppData/Local/GitHubDesktop/bin
-${HOME}/AppData/Local/Programs/Microsoft VS Code/bin
-${HOME}/AppData/Roaming/npm
-/c/Go/bin
-/c/ProgramData/DockerDesktop/version-bin
-/c/ProgramData/chocolatey/bin
-/c/Program Files/Docker/Docker/resources/bin
-/c/Program Files/Git/cmd
-/c/Program Files/Git/mingw64/bin
-/c/Program Files/Git/usr/bin
-/c/Program Files/dotnet
-/c/Program Files/nodejs
-/c/Program Files (x86)/Microsoft SDKs/Azure/CLI2/wbin
-/c/Windows
-/c/Windows/System32
-/c/Windows/System32/Wbem
-/c/Windows/System32/WindowsPowerShell/v1.0
+${HOME}/Nextcloud/scripts
 EOF
 )"
 
+# /opt/X11/bin
+# /usr/local/opt/coreutils/libexec/gnubin
+# /usr/local/opt/gawk/libexec/gnubin
+# /usr/local/opt/grep/libexec/gnubin
+# /usr/local/opt/gnu-tar/libexec/gnubin
+# /usr/local/opt/gnu-sed/libexec/gnubin
+# ${HOME}/AppData/Local/GitHubDesktop/bin
+# ${HOME}/AppData/Local/Programs/Microsoft VS Code/bin
+# ${HOME}/AppData/Roaming/npm
+# ${HOME}/Library/Python/3.7/bin
+# ${HOME}/Library/Python/2.7/bin
+# /usr/lib/mit/bin
+# /usr/lib/mit/sbin
+# /usr/local/Cellar
+# /c/Go/bin
+# /c/ProgramData/DockerDesktop/version-bin
+# /c/ProgramData/chocolatey/bin
+# /c/Program Files/Docker/Docker/resources/bin
+# /c/Program Files/Git/cmd
+# /c/Program Files/Git/mingw64/bin
+# /c/Program Files/Git/usr/bin
+# /c/Program Files/dotnet
+# /c/Program Files/nodejs
+# /c/Program Files (x86)/Microsoft SDKs/Azure/CLI2/wbin
+# /c/Windows
+# /c/Windows/System32
+# /c/Windows/System32/Wbem
+# /c/Windows/System32/WindowsPowerShell/v1.0
+
 export GOPATH="${HOME}/go"
+export TMUX_TMPDIR=${HOME}/.local/tmp

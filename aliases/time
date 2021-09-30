@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+alias timev="/usr/bin/time --format='cmd: %C\n%E elapsed, %P CPU, %Mk maxresident'"
