@@ -2,8 +2,8 @@
 
 gpush () {
   local branch="$(git branch | awk '/*/{print $2}')"
-  gpull || return 1
-  git commit -a
+  gpull || return $?
+  git commit -a || return $?
   git push origin "${branch}"
 }
 

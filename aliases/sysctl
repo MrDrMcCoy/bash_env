@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+alias dropcache='sudo sysctl vm.drop_caches=3'

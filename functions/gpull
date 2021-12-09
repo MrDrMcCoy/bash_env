@@ -2,13 +2,9 @@
 
 gpull () {
   local branch="$(git branch | awk '/*/{print $2}')"
-  if [ "${branch}" = "master" ]; then
-    git pull origin "${branch}"
-    git fetch --prune
-  else
-    git pull origin "${branch}"
-    git pull origin master
-  fi
+  git pull origin "${branch}" || return $?
+  [ "${branch}" = "master" ] || git pull origin master || return $?
+  git fetch --prune
 }
 
 # This allows the function to be run as a script if this file is executed directly
