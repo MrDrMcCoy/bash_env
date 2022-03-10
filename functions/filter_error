@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+filter_error(){ # usage: filter_error [command] [error string]
+  local output
+  local -i exitcode
+  set +e
+  output="$(eval "${1}" 2>&1)"
+  exitcode=${?}
+  echo "${output}"
+  [[ ${output} =~ ${2} ]] && exitcode=0
+  set -e
+  return ${exitcode}
+}

@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+toggleusb() {
+  # Toggles availability of a USB device.
+  # Takes a single argument of "[vendorID]:[productID]" as can be gained from lsusb
+  for d in /sys/bus/usb/devices/*; do
+    sudo grep -q "${1%%:*}" "${d}/idVendor" || continue
+    sudo grep -q "${1##*:}" "${d}/idProduct" || continue
+    local device="$(sudo cat "${d}/manufacturer") $(sudo cat "${d}/product")"
+    case "$(sudo cat "${d}/authorized")" in
+      0) sudo tee "${d}/authorized" <<< 1 >/dev/null && echo "Enabled USB device: ${device}" ;;
+      1) sudo tee "${d}/authorized" <<< 0 >/dev/null && echo "Disabled USB device: ${device}" ;;
+    esac
+    return 0
+  done 2>/dev/null
+  echo "Error" ; return 1
+}
+
+# anark laptop integrated webcam = 04f2:b6cb
