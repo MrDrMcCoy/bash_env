@@ -1,18 +1,57 @@
 #!/usr/bin/env bash
 
 toggleusb() {
-  # Toggles availability of a USB device.
-  # Takes a single argument of "[vendorID]:[productID]" as can be gained from lsusb
-  for d in /sys/bus/usb/devices/*; do
-    sudo grep -q "${1%%:*}" "${d}/idVendor" || continue
-    sudo grep -q "${1##*:}" "${d}/idProduct" || continue
+  local action="status"
+  local device=""
+  local productid=""
+  local vendorid=""
+  local usage="
+toggleusb: enables or disables a USB device
+
+Usage:
+  toggleusb [id] [action]
+
+Where:
+  [id] is 'vendorID:productID' as can be gained from lsusb
+  [action] is any one of:
+    [enable|on|1] to enable the device
+    [disable|off|0] to disable the device
+    [toggle] to switch its state
+    [status] to display current state of device (default)
+"
+  while (($#)) ; do
+      case "${1}" in
+        -h|--help|help|-\?) fold -w $(tput cols || echo 80) <<< "${usage}" ; return 1 ;;
+        enable|disable|on|off|1|0|toggle|status) local action="${1}" ;;
+        *:*) local productid="${1##*:}" && local vendorid="${1%%:*}" ;;
+        *) echo -e "Unknown argument: ${1}\n${usage}" ; return 1 ;;
+      esac
+    shift
+  done
+  [ -z "${vendorid:-}" -o -z "${productid:-}" ] && {
+    fold -w $(tput cols || echo 80) <<< "${usage}"
+    return 1
+  }
+  for d in /sys/bus/usb/devices/* ; do
+    sudo grep -q "${productid}" "${d}/idProduct" 2>/dev/null || continue
+    sudo grep -q "${vendorid}"  "${d}/idVendor"  2>/dev/null || continue
     local device="$(sudo cat "${d}/manufacturer") $(sudo cat "${d}/product")"
+    case "${action}" in
+      e*|on|1)  sudo tee "${d}/authorized" <<< 1 >/dev/null ;;
+      d*|off|0) sudo tee "${d}/authorized" <<< 0 >/dev/null ;;
+      toggle)
+        case "$(sudo cat "${d}/authorized")" in
+          0) sudo tee "${d}/authorized" <<< 1 >/dev/null ;;
+          1) sudo tee "${d}/authorized" <<< 0 >/dev/null ;;
+        esac
+      ;;
+    esac
     case "$(sudo cat "${d}/authorized")" in
-      0) sudo tee "${d}/authorized" <<< 1 >/dev/null && echo "Enabled USB device: ${device}" ;;
-      1) sudo tee "${d}/authorized" <<< 0 >/dev/null && echo "Disabled USB device: ${device}" ;;
+      0) echo "${device} is disabled" ;;
+      1) echo "${device} is enabled" ;;
     esac
     return 0
-  done 2>/dev/null
+  done
   echo "Error" ; return 1
 }
 
