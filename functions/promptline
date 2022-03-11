@@ -8,6 +8,8 @@ promptline () {
   local prompt=
   local cwd=
   # commit history as we go
+  history -n
+  history -a
   history -w
   # show last exit error code
   [ ${lastexit} != 0 ] && prompt+="${tred}${lastexit} "

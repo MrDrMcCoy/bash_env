@@ -3,5 +3,10 @@
 # if command -v bat &>/dev/null ; then
 #   alias less="bat --style=plain,header --pager='less -LRIFS'"
 # else
-alias less="less -LRIFS"
+if command -v most >/dev/null ; then
+  alias less='most'
+else
+  alias less="less -LMRIFSQ"
+fi
+
 # fi
