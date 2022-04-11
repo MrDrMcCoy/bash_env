@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-command -v most >/dev/null && alias man='man --pager=most'
+# command -v most >/dev/null && alias man='man --pager=most'
