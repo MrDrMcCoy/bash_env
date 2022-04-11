@@ -54,6 +54,8 @@ pm() {
       --force-resolution
     )
     local upflags=(--no-refresh dist-upgrade
+      --allow-downgrade
+      --allow-name-change
       --allow-vendor-change
       --auto-agree-with-licenses
       --download-in-advance
