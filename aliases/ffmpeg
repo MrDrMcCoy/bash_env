@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+command -v ffmpeg &>/dev/null && alias ffmpeg="ffmpeg -loglevel error -stats"
+command -v ffplay &>/dev/null && alias ffplay="ffplay -loglevel error -autoexit"

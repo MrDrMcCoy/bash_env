@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 
-command -v etrace &>/dev/null && alias strace="echo 'Use etrace.'"
+alias strace='strace --decode-pids=comm,pidns -fttvxyyY'
+# command -v etrace &>/dev/null && alias strace="echo 'Use etrace.'"
