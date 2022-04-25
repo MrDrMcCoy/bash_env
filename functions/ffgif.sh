@@ -30,7 +30,7 @@ ffgif() {
             --loop|-l) shift ; [[ ${1} =~ n|no|-1 ]] && loop=-1 ;;
             --output|-o) shift ; output="${1}" ;;
             --palette) shift ; palette="${1}" ;;
-            --postflags) shift ; postflags+=("${1})" ;;
+            --postflags) shift ; postflags+=("${1}") ;;
             --preflags) shift ; preflags+=("${1}") ;;
             --speed) shift ; speed="${1}" ;;
             --start|-s) shift ; preflags+=(-ss "${1}") ;;
