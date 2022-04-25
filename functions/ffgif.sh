@@ -21,6 +21,29 @@ ffgif() {
     if [[ $# == 0 ]]; then echo "ERROR: You must specify an option. Try -h for help." ; return 1 ; fi
     while (($#)) ; do
         case "${1}" in
+--help|-h) fold -sw "${COLUMNS:-80}" <<EOF
+ffgif: convert video to gif
+
+Usage: ffgif [options] ...
+
+Options:
+    [--dither] Dithering mode. Choices are none, bayer:bayer_scale=[1-3], floyd_steinberg, sierra2. (Default: ${dither})
+    [--dry-run | -n] Print commands that would be run instead of executing them.
+    [--duration | -d] Duration from start time of input video to select for gif.
+    [--extravf | -f] Extra video filters to pass to ffmpeg. (Default: ${extravf})
+    [--fps | -r] Number of frames per second. (Default: ${fps})
+    [--help | -h] Print this help
+    [--input | -i] Input file path.
+    [--loop | -l] Should the gif loop? (Default: yes)
+    [--output | -o] Name of output file.
+    [--palette] Stats mode for palettegen. Choices are diff, full. (Default: ${palette})
+    [--postflags] Extra flags to pass to ffmpeg after the input file.
+    [--preflags] Extra flags to pass to ffmpeg before the input file.
+    [--speed] Playback speed of gif as a decimal value of input video. (default: ${speed}).
+    [--start | -s] Start time of input video.
+    [--width | -w] Gif width in pixels. Must be an even number. (Default: ${width})
+EOF
+return 0 ;;
             --dither) shift ; dither="${1}" ;;
             --dry-run|-n) dry_run="echo" ;;
             --duration|-d) shift ; preflags+=(-t "${1}") ;;
@@ -35,29 +58,6 @@ ffgif() {
             --speed) shift ; speed="${1}" ;;
             --start|-s) shift ; preflags+=(-ss "${1}") ;;
             --width|-w) shift ; width="${1}" ;;
-            --help|-h) fold -sw "${COLUMNS:-80}" <<EOF
-ffgif: convert video to gif
-
-Usage: ffgif [options] ...
-
-Options:
-    [--dither] Dithering mode. Choices are none, bayer:bayer_scale=[1-3], floyd_steinberg, sierra2. (Default: none)
-    [--dry-run | -n] Print commands that would be run instead of executing them.
-    [--duration | -d] Duration from start time of input video to select for gif.
-    [--extravf | -f] Extra video filters to pass to ffmpeg. (Default: cas=0.8,hqdn3d)
-    [--fps | -r] Number of frames per second. (Default: 16)
-    [--help | -h] Print this help
-    [--input | -i] Input file path.
-    [--loop | -l] Should the gif loop? (Default: yes)
-    [--output | -o] Name of output file.
-    [--palette] Stats mode for palettegen. Choices are diff, full. (Default: full)
-    [--postflags] Extra flags to pass to ffmpeg after the input file.
-    [--preflags] Extra flags to pass to ffmpeg before the input file.
-    [--speed] Playback speed of gif as a decimal value of input video. (default: 1).
-    [--start | -s] Start time of input video.
-    [--width | -w] Gif width in pixels. Must be an even number. (Default: 480)
-EOF
-            return ;;
             *) echo "Unknown argument: '${1}'. Try -h for help" ; return 1 ;;
         esac
         shift
