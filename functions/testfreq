@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+testfreq() {
+  local -i f="${1:-100}"
+  echo -e "\nfreq=${f}hz"
+  play -qnc 2 synth 2 sine "${f}" remix 1 0
+  read -p "pause" _
+  play -qnc 2 synth 2 sine "${f}" remix 0 1
+  read -p "step/repeat? (default=100) # " p
+  if  [[ ${p:-0} =~ [rR] ]]; then testfreq $f
+  elif [ ${p:-0} -gt 0 ]; then testfreq $((f+p))
+  else testfreq $((f+100))
+  fi
+}
+
+# This allows the function to be run as a script if this file is executed directly
+# [[ $- == *i* ]] || testfreq "$@"

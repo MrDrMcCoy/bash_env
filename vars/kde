@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+export GTK_USE_PORTAL=1
+# export XDG_DESKTOP_PORTAL=1
