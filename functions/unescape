@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+unescape () {
+  sed -r 's/\x1b\[([0-9]{1,2}(;[0-9]{1,2})*)?[m|K]//g'
+}
+
+# This allows the function to be run as a script if this file is executed directly
+# [[ $- == *i* ]] || unescape "$@"
