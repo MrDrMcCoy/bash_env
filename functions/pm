@@ -8,7 +8,7 @@ pm() {
     local cleanup="paru --noconfirm -Sccd"
     local checkflags=(-Sy)
     local rmflags=(-Rsu)
-    local searchflags=(-Ss)
+    local searchflags=(-Ss --bottomup)
     local inflags=(-S
       --batchinstall
       --cleanafter
