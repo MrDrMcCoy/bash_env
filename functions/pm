@@ -3,44 +3,45 @@
 pm() {
   local task="${1}"
   shift
-  if command -v yay ; then
-    local cmd="yay"
-    local cleanup="yay -Ycc ; yay --noconfirm -Scc"
+  if command -v paru ; then
+    local cmd="paru"
+    local cleanup="paru --noconfirm -Sccd"
     local checkflags=(-Sy)
     local rmflags=(-Rsu)
-    local searchflags=(-Ss)
+    local searchflags=(-Ss --bottomup)
     local inflags=(-S
       --batchinstall
+      --cleanafter
       --needed
-      --nocleanmenu
-      --nodiffmenu
-      --noeditmenu
       --norebuild
       --noredownload
       --noremovemake
+      --skipreview
+      --sudoloop
     )
     local upflags=(-Su
       --batchinstall
+      --cleanafter
       --combinedupgrade
+      --devel
       --needed
-      --nocleanmenu
-      --nodiffmenu
-      --noeditmenu
       --norebuild
       --noredownload
       --noremovemake
+      --skipreview
+      --sudoloop
     )
     local panicflags=(
       --batchinstall
-      --nocleanmenu
-      --nodiffmenu
-      --noeditmenu
+      --cleanafter
       --rebuildall
       --redownloadall
       --removemake
+      --skipreview
+      --sudoloop
     )
-    local panicsearch=(yay -Qq)
-    local panicreinstall=(yay -S)
+    local panicsearch=(paru -Qq)
+    local panicreinstall=(paru -S)
   elif command -v zypper ; then
     local cmd="sudo zypper"
     local cleanup="sudo zypper clean"
@@ -123,7 +124,7 @@ Arguments: anything you would normally pass to your system package manager.
 pm will set the preferred defaults of the author for each operation, then run a cleanup task at the end of a successful run. Don't like it, don't use it.
 
 Supported package managers:
-  - yay
+  - paru
   - zypper
 
 More features will come eventually.

@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-command -v sd &>/dev/null && alias sed="echo 'Use sd.'"
+# command -v sd &>/dev/null && alias sed="echo 'Use sd.'"

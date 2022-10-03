@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-alias  zst='zstd -vT0 --ultra --long --rm --adapt'
-alias  unzst='zstd -vd --rm '
+alias zst='zstd -vT0 --ultra --long --rm --adapt'
+alias unzst='zstd -vd --rm'

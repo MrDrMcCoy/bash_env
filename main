@@ -16,4 +16,6 @@ fi
 # Source extra Mac stuff if on a Mac
 [[ "$(uname)" == 'Darwin' ]] && source "$PWD/osx"
 
-return 0
+[ -f "/usr/share/nvm/init-nvm.sh" ] && source /usr/share/nvm/init-nvm.sh
+
+# return 0
