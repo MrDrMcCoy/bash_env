@@ -32,7 +32,7 @@ trap 'timer_start' DEBUG
 
 promptline () {
   # declare local variables
-  local -i lastexit="$?"
+  local -i lastexit="${?}"
   local prompt=
   local cwd=
   # show last exit error code
@@ -40,6 +40,8 @@ promptline () {
   # show time of last command
   timer_stop
   prompt+="${twhite}${timer_show} "
+  # show date
+  prompt+="$(date +'%I:%M%P %m/%d') "
   # show background jobs
   [ -z "$(jobs -p)" ] || prompt+="${tpurple}[$(jobs -p | wc -l)] "
   # show time
@@ -47,20 +49,20 @@ promptline () {
   # show git info
   local gs="$(git status --porcelain=v2 --ignore-submodules=all -bsu 2>/dev/null)"
   if [ -n "${gs}" ] ; then
-    local branch="$(awk '/##/{print $2}' <<< "${gs}" | /usr/bin/sed 's/\.\.\..*//g')"
     local reponame="$(basename "$(git rev-parse --show-toplevel)")"
-    local -i ahead="$(grep -oi '(?<=ahead )\d+' <<< "${gs}" || echo 0)"
-    local -i behind="$(grep -oi '(?<=behind )\d+' <<< "${gs}" || echo 0)"
+    local branch="$(gawk '/##/{print $2}' <<< "${gs}" | /usr/bin/sed 's/\.\.\..*//g')"
+    local -i ahead="$(gawk 'match ($0, /(ahead )([0-9]+)/, o){print o[2]}' <<< "${gs}" || echo 0)"
+    local -i behind="$(gawk 'match ($0, /(behind )([0-9]+)/, o){print o[2]}' <<< "${gs}" || echo 0)"
     local -i modified="$(grep -ci '^( |d|a|m|r){2}' <<< "${gs}")"
     local -i untracked="$(grep -ci '^( |\?){2}' <<< "${gs}")"
     prompt+="${twhite}["
     [ "${cwd}" != "${reponame}" ] && prompt+="${tcyan}${reponame} "
     [ -n "${branch}" ] && prompt+="${tpurple}${branch}"
     prompt+="${tbrown}"
-    [ ${ahead} = 0 ] || prompt+=" A${ahead}"
-    [ ${behind} = 0 ] || prompt+=" B${behind}"
-    [ ${modified} = 0 ] || prompt+=" M${modified}"
-    [ ${untracked} = 0 ] || prompt+=" U${untracked}"
+    [ ${ahead} != 0 ] && prompt+=" A${ahead}"
+    [ ${behind} != 0 ] && prompt+=" B${behind}"
+    [ ${modified} != 0 ] && prompt+=" M${modified}"
+    [ ${untracked} != 0 ] && prompt+=" U${untracked}"
     prompt+="${twhite}] "
   fi
   # add user@host
@@ -96,11 +98,9 @@ promptline () {
   # if not enough space, add newline
   [ $(echo -e "${prompt}" | /usr/bin/sed 's/\x1B\[[0-9;]*[JKmsu]//g' | wc -m) -ge $((COLUMNS+5)) ] && prompt+="\\n"
   # show user prompt character
-  prompt+="\\\$ "
+  prompt+="\n\\\$ "
   # set bash promptline
   PS1="${prompt}"
   # commit history as we go
-  # history -n # read new history from disk
   history -a # append to file
-  # history -w # write out history to file
 }
