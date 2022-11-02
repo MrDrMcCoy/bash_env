@@ -86,19 +86,20 @@ promptline () {
     cwd="${PWD}"
   fi
   # chop current path if too long
-  until [ $(($(echo -e "${prompt}" | /usr/bin/sed 's/\x1B\[[0-9;]*[JKmsu]//g' | wc -m)+${#cwd})) -le $((COLUMNS+1)) ] ; do
-    cwd="${cwd/\/…\/$(basename "${PWD}")/}" # remove existing path abbreviation
-    cwd="${cwd%/*}/…/$(basename "${PWD}")" # remove element from end of path and re-add abbreviation
-    [ "${cwd}" = "~/…/$(basename "${PWD}")" ] && break # stop shortening if at minimum cwd
-  done
+  # until [ $(($(echo -e "${prompt}" | /usr/bin/sed 's/\x1B\[[0-9;]*[JKmsu]//g' | wc -m)+${#cwd})) -le $((COLUMNS+1)) ] ; do
+  #   cwd="${cwd/\/…\/$(basename "${PWD}")/}" # remove existing path abbreviation
+  #   cwd="${cwd%/*}/…/$(basename "${PWD}")" # remove element from end of path and re-add abbreviation
+  #   [ "${cwd}" = "~/…/$(basename "${PWD}")" ] && break # stop shortening if at minimum cwd
+  # done
   # show current path
   prompt+="${cwd} "
   # end formatting
   prompt+="${fclear}"
   # if not enough space, add newline
-  [ $(echo -e "${prompt}" | /usr/bin/sed 's/\x1B\[[0-9;]*[JKmsu]//g' | wc -m) -ge $((COLUMNS+5)) ] && prompt+="\\n"
+  local -i length="$(echo -e "${prompt}" | /usr/bin/sed 's/\x1B\[[0-9;]*[JKmsu]//g' | wc -m)"
+  [ $((length%COLUMNS)) -ge 80 ] && prompt+="\\n"
   # show user prompt character
-  prompt+="\n\\\$ "
+  prompt+="\\\$ "
   # set bash promptline
   PS1="${prompt}"
   # commit history as we go
