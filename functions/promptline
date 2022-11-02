@@ -97,7 +97,7 @@ promptline () {
   prompt+="${fclear}"
   # if not enough space, add newline
   local -i length="$(echo -e "${prompt}" | /usr/bin/sed 's/\x1B\[[0-9;]*[JKmsu]//g' | wc -m)"
-  [ $((length%COLUMNS)) -ge 80 ] && prompt+="\\n"
+  [ $((COLUMNS%length)) -le 80 ] && prompt+="\\n"
   # show user prompt character
   prompt+="\\\$ "
   # set bash promptline
