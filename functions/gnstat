@@ -1,0 +1,15 @@
+
+gnstat() {
+  printf "cmd\tpid\tport\n"
+  awk '/ 0A /{print $2 " " $10}' /proc/net/tcp |
+    while read hexaddr inode ; do
+      local port="$(printf '%d' "0x${hexaddr#*:}")"
+      local pid="$(find /proc/*/fd/* -type l 2>/dev/null |
+                    xargs ls -l 2>/dev/null |
+                      awk -F '[/]' "/${inode}/{print \$3}")"
+      local cmd="$(cat /proc/"${pid}"/comm)"
+      printf "${cmd} ${pid} ${port}\n"
+    done
+}
+
+# gnstat

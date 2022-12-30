@@ -15,6 +15,7 @@ ffgif() {
     local postflags=()
     local preflags=(-loglevel error -stats)
     local speed="1"
+    local text=
     local vf=
     local width="480"
 
@@ -41,6 +42,7 @@ Options:
     [--preflags] Extra flags to pass to ffmpeg before the input file.
     [--speed] Playback speed of gif as a decimal value of input video. (default: ${speed}).
     [--start | -s] Start time of input video.
+    [--text | -t] add text overlay in lower third.
     [--width | -w] Gif width in pixels. Must be an even number. (Default: ${width})
 EOF
 return 0 ;;
@@ -57,6 +59,7 @@ return 0 ;;
             --preflags) shift ; preflags+=("${1}") ;;
             --speed) shift ; speed="${1}" ;;
             --start|-s) shift ; preflags+=(-ss "${1}") ;;
+            --text|-t) shift ; extravf+=drawtext=x=w*0.05:y=h*0.9:shadowx=4:shadowy=4:fontcolor=white:fontsize=76:fix_bounds=true:text="${1}", ;;
             --width|-w) shift ; width="${1}" ;;
             *) echo "Unknown argument: '${1}'. Try -h for help" ; return 1 ;;
         esac
@@ -72,7 +75,7 @@ return 0 ;;
 
     vf="${extravf}setpts=${speed}*PTS,fps=${fps},scale=${width}:-1:flags=lanczos,split[s0][s1];[s0]palettegen=stats_mode=${palette}[p];[s1][p]paletteuse=dither=${dither}"
 
-    if ${dry_run} ffmpeg ${preflags[@]} -i "${input}" -vf "${vf}" -loop ${loop} ${postflags} "${output}"
+    if ${dry_run} ffmpeg -y ${preflags[@]} -i "${input}" -vf "${vf}" -loop ${loop} ${postflags} "${output}"
         then echo "Successfully saved to '${output}'"
         else echo "Error during conversion. See output above."
     fi
