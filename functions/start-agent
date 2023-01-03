@@ -5,6 +5,7 @@ start-agent () {
     echo "start-agent() ERROR: pgrep not found" 1>&2
     return 1
   }
+  mkdir -vpm 0700 "${HOME}/.ssh"
   declare -gx SSH_AUTH_SOCK="${HOME}/.ssh/agent.sock"
   declare -gx SSH_AGENT_PID="$(pgrep -fo "${SSH_AUTH_SOCK}")"
   [ "${SSH_AGENT_PID}" ] || {

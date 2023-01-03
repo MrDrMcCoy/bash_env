@@ -36,7 +36,7 @@ Options:
     [--help | -h] Print this help
     [--input | -i] Input file path.
     [--loop | -l] Should the gif loop? (Default: yes)
-    [--output | -o] Name of output file.
+    [--output | -o] Name of output file. (Default: <input_filename>.gif)
     [--palette] Stats mode for palettegen. Choices are diff, full. (Default: ${palette})
     [--postflags] Extra flags to pass to ffmpeg after the input file.
     [--preflags] Extra flags to pass to ffmpeg before the input file.
@@ -66,7 +66,7 @@ return 0 ;;
         shift
     done
 
-    for var in input output ; do
+    for var in input ; do
         [ -n "${!var}" ] || {
             echo "ERROR: You must specify an ${var}. Exiting."
             return 1
@@ -75,8 +75,8 @@ return 0 ;;
 
     vf="${extravf}setpts=${speed}*PTS,fps=${fps},scale=${width}:-1:flags=lanczos,split[s0][s1];[s0]palettegen=stats_mode=${palette}[p];[s1][p]paletteuse=dither=${dither}"
 
-    if ${dry_run} ffmpeg -y ${preflags[@]} -i "${input}" -vf "${vf}" -loop ${loop} ${postflags} "${output}"
-        then echo "Successfully saved to '${output}'"
+    if ${dry_run} ffmpeg -y ${preflags[@]} -i "${input}" -vf "${vf}" -loop ${loop} ${postflags} "${output:-${input}.gif}"
+        then echo "Successfully saved to '${output:-${input}.gif}'"
         else echo "Error during conversion. See output above."
     fi
 }
