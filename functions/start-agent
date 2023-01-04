@@ -1,22 +1,20 @@
 #!/usr/bin/env bash
 
-start-agent () {
-  command -v pgrep >/dev/null || {
-    echo "start-agent() ERROR: pgrep not found" 1>&2
-    return 1
-  }
-  mkdir -vpm 0700 "${HOME}/.ssh"
-  declare -gx SSH_AUTH_SOCK="${HOME}/.ssh/agent.sock"
-  declare -gx SSH_AGENT_PID="$(pgrep -fo "${SSH_AUTH_SOCK}")"
-  [ "${SSH_AGENT_PID}" ] || {
-    rm "${SSH_AUTH_SOCK}"
-    ssh-agent -a "${SSH_AUTH_SOCK}"
-    declare -gx SSH_AGENT_PID="$(pgrep -fo "${SSH_AUTH_SOCK}")"
-    [ "${SSH_AGENT_PID}" ] || {
-      echo "start-agent() ERROR: PID not set for ssh agent" 1>&2
-      return 1
-    }
+start_agent () {
+  [ -d "${XDG_CACHE_HOME}" ] || XDG_CACHE_HOME="${HOME}/.cache"
+  mkdir -vpm 0700 "${XDG_CACHE_HOME}/ssh"
+  { # check if agent vars are already exported
+    test -S "${SSH_AUTH_SOCK}" &&
+    kill -0 "${SSH_AGENT_PID}"
+  } 2>/dev/null || { # check for running agent info on disk
+    read SSH_AUTH_SOCK < "${XDG_CACHE_HOME}/ssh/auth_sock" && test -S "${SSH_AUTH_SOCK}" &&
+    read SSH_AGENT_PID < "${XDG_CACHE_HOME}/ssh/agent_pid" && kill -0 "${SSH_AGENT_PID}" &&
+    export SSH_AUTH_SOCK SSH_AGENT_PID
+  } 2>/dev/null || { # start agent if not running
+    eval $(ssh-agent)
+    echo "${SSH_AUTH_SOCK}" > "${XDG_CACHE_HOME}/ssh/auth_sock"
+    echo "${SSH_AGENT_PID}" > "${XDG_CACHE_HOME}/ssh/agent_pid"
   }
 }
 
-start-agent
+start_agent
