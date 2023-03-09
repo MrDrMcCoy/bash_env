@@ -39,6 +39,7 @@ pm() {
       --removemake
       --skipreview
       --sudoloop
+      -
     )
     local panicsearch=(paru -Qq)
     local panicreinstall=(paru -S)
@@ -99,7 +100,7 @@ pm() {
       eval ${cleanup}
       ;;
     p*)
-      ${panicsearch[@]} | ${panicreinstall[@]} ${panicflags[@]} - || return
+      ${panicsearch[@]} | ${panicreinstall[@]} ${panicflags[@]} || return
       eval ${cleanup}
       ;;
     s*)
