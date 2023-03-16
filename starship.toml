@@ -1,0 +1,71 @@
+# Get editor completions based on the config schema
+# "$schema" = 'https://starship.rs/config-schema.json'
+
+# global options
+add_newline = false
+scan_timeout = 80
+command_timeout = 500
+
+# prompt line template
+format='$status$cmd_duration$jobs$time$git_branch$git_status$username@$hostname$directory$character'
+
+[status]
+disabled=false
+map_symbol=true
+pipestatus=true
+format='[$symbol$status]($style) '
+[cmd_duration]
+disabled=false
+min_time=100
+format="[$duration](white) "
+[jobs]
+disabled=false
+format='[$number]($style) '
+number_threshold=1
+[time]
+disabled=false
+style="white"
+use_12hr=true
+format="[$time]($style) "
+time_format="%I:%M%P %m/%d"
+[git_branch]
+disabled=false
+format='[\[$branch(:$remote_branch)](purple)'
+[git_status]
+disabled=false
+format='([ $all_status$ahead_behind$up_to_date\] ](purple))'
+ahead='A$count'
+behind='B$count'
+deleted='D$count'
+diverged='D${ahead_count}⇣${behind_count}'
+modified='M$count'
+renamed='R$count'
+staged='S$count'
+stashed='$$count'
+untracked='U$count'
+up_to_date=''
+[username]
+disabled=false
+show_always=true
+format='[$user]($style)'
+[hostname]
+disabled=false
+ssh_only=false
+format='[$ssh_symbol$hostname:](214)'
+[directory]
+disabled=false
+format='[$path]($style)[$read_only]($read_only_style)'
+read_only=''
+truncation_symbol='…/'
+[character]
+disabled=false
+format='''
+
+$symbol '''
+success_symbol = '[❯](bold green)'
+error_symbol='[❯](bold red)'
+[custom.history]
+description='commit history after each command'
+command='history -a'
+when=true
+format='[$symbol($output )]($style)'

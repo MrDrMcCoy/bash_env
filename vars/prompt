@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
 
 #PS1="\t \W \$ "
-PROMPT_COMMAND=promptline
+
+if command -v starship &>/dev/null
+then eval "$(starship init bash)"
+else PROMPT_COMMAND=promptline
+fi

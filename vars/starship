@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+export STARSHIP_CONFIG="${PWD}/starship.toml"
+export STARSHIP_LOG="starship module"
