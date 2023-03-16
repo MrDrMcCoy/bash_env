@@ -7,7 +7,7 @@ scan_timeout = 80
 command_timeout = 500
 
 # prompt line template
-format='$status$cmd_duration$jobs$time$git_branch$git_status$username@$hostname$directory$character'
+format='$status$cmd_duration$jobs$time$git_branch$git_status$username@$hostname:$directory$character'
 
 [status]
 disabled=false
@@ -51,7 +51,7 @@ format='[$user]($style)'
 [hostname]
 disabled=false
 ssh_only=false
-format='[$ssh_symbol$hostname:](214)'
+format='[$ssh_symbol$hostname](214)'
 [directory]
 disabled=false
 format='[$path]($style)[$read_only]($read_only_style)'
