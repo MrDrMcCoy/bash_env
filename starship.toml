@@ -30,10 +30,10 @@ format="[$time]($style) "
 time_format="%I:%M%P %m/%d"
 [git_branch]
 disabled=false
-format='[\[$branch(:$remote_branch)](purple)'
+format='[\[$branch(:$remote_branch)\] ](purple)'
 [git_status]
 disabled=false
-format='([ $all_status$ahead_behind$up_to_date\] ](purple))'
+format='([\($all_status$ahead_behind\) ](202))'
 ahead='A$count'
 behind='B$count'
 conflicted='≠'
@@ -44,7 +44,6 @@ renamed='R$count'
 staged='S$count'
 stashed='$$count'
 untracked='U$count'
-up_to_date='\u200B'
 [username]
 disabled=false
 show_always=true
