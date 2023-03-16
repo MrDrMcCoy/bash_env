@@ -36,6 +36,7 @@ disabled=false
 format='([ $all_status$ahead_behind$up_to_date\] ](purple))'
 ahead='A$count'
 behind='B$count'
+conflicted='≠'
 deleted='D$count'
 diverged='D${ahead_count}⇣${behind_count}'
 modified='M$count'
@@ -43,7 +44,7 @@ renamed='R$count'
 staged='S$count'
 stashed='$$count'
 untracked='U$count'
-up_to_date=''
+up_to_date='\u200B'
 [username]
 disabled=false
 show_always=true
