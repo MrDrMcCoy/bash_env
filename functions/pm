@@ -79,6 +79,17 @@ pm() {
       --no-recommends
       $(rpm -qa --qf '%{NAME} ')
     )
+  elif command -v dnf ; then
+    local cmd="sudo dnf"
+    local cleanup="sudo dnf autoremove ; sudo dnf clean all"
+    local checkflags=(--refresh check-update)
+    local searchflags=(search)
+    local inflags=(install)
+    local upflags=(upgrade --best)
+    local rmflags=(remove)
+    local panicflags=()
+    local panicsearch=(true)
+    local panicreinstall=(sudo dnf reinstall "$@" $(rpm -qa --qf '%{NAME} '))
   else
     echo "ERROR: no supported package managers found."
     return
