@@ -81,15 +81,15 @@ pm() {
     )
   elif command -v dnf ; then
     local cmd="sudo dnf"
-    local cleanup="sudo dnf autoremove ; sudo dnf clean all"
+    local cleanup="sudo dnf autoremove --cacheonly ; sudo dnf clean packages"
     local checkflags=(--refresh check-update)
-    local searchflags=(search)
-    local inflags=(install)
-    local upflags=(upgrade --best)
-    local rmflags=(remove)
-    local panicflags=()
+    local searchflags=(search --cacheonly)
+    local inflags=(install --best --allowerasing)
+    local upflags=(upgrade --best --allowerasing)
+    local rmflags=(remove --cacheonly)
+    local panicflags=(--best --allowerasing "$@" $(rpm -qa --qf '%{NAME} '))
     local panicsearch=(true)
-    local panicreinstall=(sudo dnf reinstall "$@" $(rpm -qa --qf '%{NAME} '))
+    local panicreinstall=(sudo dnf reinstall)
   else
     echo "ERROR: no supported package managers found."
     return

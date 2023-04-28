@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
 
+# tee "${HOME}/.config/plasma-workspace/env/${USER}.sh" <<< "source ${HOME}/bash_env/vars/kde"
+
 export GTK_USE_PORTAL=1
 # export XDG_DESKTOP_PORTAL=1

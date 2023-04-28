@@ -55,4 +55,4 @@ Where:
   echo "Error" ; return 1
 }
 
-# anark laptop integrated webcam = 04f2:b6cb
+# bb laptop integrated webcam = 04f2:b6be
