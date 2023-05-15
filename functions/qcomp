@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+qcomp () {
+  # quickly compress files and directories of files
+  # Usage:
+  #   qcomp /path/to/file/or/dir ...
+  if command -v zstd ; then
+    local cmd="zstd -T0 --long --adapt=min=9"
+    local ext="zst"
+  elif command -v xz ; then
+    local cmd="xz -0T0"
+    local ext="xz"
+  elif command -v pigz ; then
+    local cmd="pigz -2N"
+    local ext="gz"
+  else
+    local cmd="gzip -1N"
+    local ext="gz"
+  fi
+  for path in "${@}" ; do
+    [ -d "${path}" ] && { for f in "${path}"/* ; do qcomp "${f}" ; done ; }
+    [ -f "${path}" ] || continue
+    [[ "${path}" =~ (zst|xz|gz)$ ]] && continue
+    local ctime="$(stat --printf=%W "${path}")"
+    local mtime="$(stat --printf=%Y "${path}")"
+    local ofile="${path}.${ctime}-${mtime}.${ext}"
+    ${cmd}<"${path}">"${ofile}" && rm "${path}"
+  done &>/dev/null
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || "${0}" "${@}"

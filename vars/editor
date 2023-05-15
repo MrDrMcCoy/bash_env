@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-if command -v micro >/dev/null ; then
+if command -v micro ; then
   export EDITOR="micro"
-elif command -v nano >/dev/null ; then
+elif command -v nano ; then
   export EDITOR="nano"
-fi
+fi >/dev/null
