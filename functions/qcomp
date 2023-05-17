@@ -21,9 +21,8 @@ qcomp () {
     [ -d "${path}" ] && { for f in "${path}"/* ; do qcomp "${f}" ; done ; }
     [ -f "${path}" ] || continue
     [[ "${path}" =~ (zst|xz|gz)$ ]] && continue
-    local ctime="$(stat --printf=%W "${path}")"
-    local mtime="$(stat --printf=%Y "${path}")"
-    local ofile="${path}.${ctime}-${mtime}.${ext}"
+    local time="$(stat --printf=%W-%Y "${path}")"
+    local ofile="${path}.${time}.${ext}"
     ${cmd} < "${path}" > "${ofile}" && rm -f "${path}"
   done
 }
