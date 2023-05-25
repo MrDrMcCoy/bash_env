@@ -8,7 +8,7 @@ ${HOME}/go/bin
 ${HOME}/.cargo/bin
 ${HOME}/.local/bin
 ${HOME}/node_modules/.bin
-${HOME}/.nvm/versions/node/$(cat ${HOME}/.nvm/alias/default)/bin
+${HOME}/.nvm/versions/node/$(cat ${HOME}/.nvm/alias/default &>/dev/null)/bin
 /opt/local/bin
 /opt/local/sbin
 /opt/bin

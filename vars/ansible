@@ -8,4 +8,5 @@ export ANSIBLE_LOAD_CALLBACK_PLUGINS="community.general.yaml,community.general.l
 export ANSIBLE_LOG_FOLDER="${HOME}/.cache/ansible/logs"
 # export ANSIBLE_LOG_PATH="${HOME}/.cache/ansible/logs/ansible.log"
 export ANSIBLE_NO_TARGET_SYSLOG="False"
+export ANSIBLE_RETRY_FILES_ENABLED="True"
 export ANSIBLE_STDOUT_CALLBACK="yaml"

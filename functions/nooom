@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+nooom () {
+  launch_opts=(
+      systemd-run
+      --user
+      --service-type=exec
+      --same-dir
+      --pty
+      --pipe
+      -p OOMScoreAdjust=1000
+      -p OOMPolicy=kill
+      -p MemoryAccounting=on
+      -p MemoryLow=$(awk '/MemTotal/{ print int($2*.1) }' /proc/meminfo)K
+      -p MemoryHigh=$(awk '/MemTotal/{ print int($2*.5) }' /proc/meminfo)K
+      -p MemoryMax=$(awk '/MemTotal/{ print int($2*.75) }' /proc/meminfo)K
+      "${@}"
+  )
+ "${launch_opts[@]}"
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || nooom "$@"
