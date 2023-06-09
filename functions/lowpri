@@ -22,7 +22,6 @@ lowpri () {
       -p Nice=19
       -p OOMScoreAdjust=1000
       -p OOMPolicy=kill
-      -p RestrictRealtime=on
       "${@}"
   )
  "${launch_opts[@]}"
