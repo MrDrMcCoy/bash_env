@@ -3,7 +3,7 @@
 # export ANSIBLE_LOG_PATH="${HOME}/.cache/ansible/logs/ansible.log"
 export ANSIBLE_BECOME_PASSWORD_FILE="${HOME}/.pas"
 export ANSIBLE_CALLBACKS_ENABLED="community.general.yaml,community.general.log_plays"
-export ANSIBLE_DISPLAY_ARGS_TO_STDOUT="True"
+# export ANSIBLE_DISPLAY_ARGS_TO_STDOUT="True"
 export ANSIBLE_FORKS="$(nproc)"
 export ANSIBLE_LOAD_CALLBACK_PLUGINS="community.general.yaml,community.general.log_plays"
 export ANSIBLE_LOG_FOLDER="${HOME}/.cache/ansible/logs"

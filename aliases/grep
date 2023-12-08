@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-if grep -Pq '^\d' <<< 90
+if command -v ugrep+ &>/dev/null
+  then alias grep='ugrep+ --pretty --sort=name --tabs=2 -iP'
+elif grep -Pq '^\d' <<< 90
   then alias grep='grep --color=auto -P'
 elif grep -Eq '^a|^[0-9]' <<< 90
   then alias grep='grep --color=auto -E'

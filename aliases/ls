@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-if command -v exa &>/dev/null ; then
-  alias  l='exa --git --icons --classify --long'
-  alias la='exa --git --icons --classify --all'
-  alias ll='exa --git --icons --classify --long --all'
-  alias lr='exa --git --icons --classify --long --reverse --time=modified'
-  alias ls="exa --git --icons --classify"
-  alias lt="exa --git --icons --classify --tree --level=3"
+if command -v eza &>/dev/null ; then
+  alias  l='eza --git --icons --classify --long'
+  alias la='eza --git --icons --classify --all'
+  alias ll='eza --git --icons --classify --long --all'
+  alias lr='eza --git --icons --classify --long --reverse --time=modified'
+  alias ls="eza --git --icons --classify"
+  alias lt="eza --git --icons --classify --tree --level=3"
 else
   alias ls='ls --color=always'
   alias ll='ls -lhaF --color=always'
