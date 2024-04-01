@@ -4,3 +4,8 @@ command -v bat &>/dev/null && {
   alias cat="bat -pp --tabs=2 --wrap=never"
   alias bat="bat --style=header,rule,changes --decorations=always --paging=never --wrap=never --color=always --tabs=2"
 }
+
+command -v batcat &>/dev/null && {
+  alias cat="batcat -pp --tabs=2 --wrap=never"
+  alias bat="batcat --style=header,rule,changes --decorations=always --paging=never --wrap=never --color=always --tabs=2"
+}

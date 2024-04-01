@@ -9,11 +9,10 @@ lowpri () {
       --pty
       --pipe
       -p CPUAccounting=on
-      -p CPUSchedulingPolicy=batch
       -p CPUWeight=1
       -p IOAccounting=on
-      -p IOSchedulingClass=best-effort
-      -p IOSchedulingPriority=7
+      -p IOSchedulingClass=idle
+      -p IOSchedulingPriority=1
       -p IOWeight=1
       -p MemoryAccounting=on
       -p MemoryLow=$(awk '/MemTotal/{ print int($2*.1) }' /proc/meminfo)K

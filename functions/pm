@@ -34,8 +34,8 @@ pm() {
     local panicflags=(
       --batchinstall
       --cleanafter
-      --rebuildall
-      --redownloadall
+      #--rebuildall
+      #--redownloadall
       --removemake
       --skipreview
       --sudoloop
