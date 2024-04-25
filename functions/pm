@@ -90,6 +90,28 @@ pm() {
     local panicflags=(--best --allowerasing "$@" $(rpm -qa --qf '%{NAME} '))
     local panicsearch=(true)
     local panicreinstall=(sudo dnf reinstall)
+  elif command -v nala ; then
+    local cmd="sudo nala"
+    local cleanup="sudo nala autopurge ; sudo nala clean"
+    local checkflags=(update)
+    local searchflags=(search)
+    local inflags=(install)
+    local upflags=(dist-upgrade)
+    local rmflags=(purge)
+    local panicflags=("$@" $(dpkg --get-selections | grep -v deinstall | awk '{print $1}'))
+    local panicsearch=(true)
+    local panicreinstall=(sudo apt install --reinstall)
+  elif command -v apt ; then
+    local cmd="sudo apt"
+    local cleanup="sudo apt autoremove ; sudo apt clean"
+    local checkflags=(update)
+    local searchflags=(search)
+    local inflags=(install)
+    local upflags=(dist-upgrade)
+    local rmflags=(purge)
+    local panicflags=("$@" $(dpkg --get-selections | grep -v deinstall | awk '{print $1}'))
+    local panicsearch=(true)
+    local panicreinstall=(sudo apt install --reinstall)
   else
     echo "ERROR: no supported package managers found."
     return
@@ -138,6 +160,9 @@ pm will set the preferred defaults of the author for each operation, then run a 
 Supported package managers:
   - paru
   - zypper
+  - dnf
+  - nala
+  - apt
 
 More features will come eventually.
 EOF
