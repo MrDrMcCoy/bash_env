@@ -13,6 +13,7 @@ ${HOME}/.nvm/versions/node/$(cat ${HOME}/.nvm/alias/default &>/dev/null)/bin
 /opt/local/sbin
 /opt/bin
 /opt/sbin
+/usr/games
 /usr/local/bin
 /usr/local/sbin
 /usr/bin
