@@ -14,8 +14,14 @@ ${HOME}/.nvm/versions/node/$(cat ${HOME}/.nvm/alias/default &>/dev/null)/bin
 /opt/bin
 /opt/sbin
 /usr/games
+/usr/lib/kf5
+/usr/lib/kf6
+/usr/lib/x86_64-linux-gnu/libexec/kf5
+/usr/lib/x86_64-linux-gnu/libexec/kf6
 /usr/local/bin
 /usr/local/sbin
+/usr/share/kf5
+/usr/share/kf6
 /usr/bin
 /usr/sbin
 /bin

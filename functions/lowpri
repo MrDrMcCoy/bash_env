@@ -8,19 +8,15 @@ lowpri () {
       --same-dir
       --pty
       --pipe
-      -p CPUAccounting=on
       -p CPUWeight=1
-      -p IOAccounting=on
-      -p IOSchedulingClass=idle
-      -p IOSchedulingPriority=1
       -p IOWeight=1
-      -p MemoryAccounting=on
-      -p MemoryLow=$(awk '/MemTotal/{ print int($2*.1) }' /proc/meminfo)K
-      -p MemoryHigh=$(awk '/MemTotal/{ print int($2*.5) }' /proc/meminfo)K
-      -p MemoryMax=$(awk '/MemTotal/{ print int($2*.75) }' /proc/meminfo)K
       -p Nice=19
+      -p IOSchedulingPriority=7
+      # -p CPUSchedulingPolicy=idle
+      # -p IOSchedulingClass=idle
+      -p MemoryHigh=$(awk '/MemTotal/{ print int($2*.15) }' /proc/meminfo)K
+      -p MemoryMax=$( awk '/MemTotal/{ print int($2*.20) }' /proc/meminfo)K
       -p OOMScoreAdjust=1000
-      -p OOMPolicy=kill
       "${@}"
   )
  "${launch_opts[@]}"

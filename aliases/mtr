@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+command -v mtr &>/dev/null && alias mtr="mtr --curses"
