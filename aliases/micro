@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 command -v micro &>/dev/null &&
-  alias micro="micro -tabstospaces true -scrollbar true -keepautoindent true aliases/nano"
+  alias micro="micro -tabstospaces true -scrollbar true -keepautoindent"
