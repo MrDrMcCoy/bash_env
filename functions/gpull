@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 gpull () {
-  local branch="$(git branch | awk '/*/{print $2}')"
+  local branch="$(git branch | awk '/[*]/{print $2}')" || return $?
   git pull origin "${branch}" || return $?
-  [ "${branch}" = "master" ] || git pull origin master || return $?
+  [ "${branch}" = "master" ] || git pull --rebase origin master || return $?
   git fetch --prune
 }
 

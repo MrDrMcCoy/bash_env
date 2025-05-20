@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+gapush () {
+  local branch="$(git branch | awk '/[*]/{print $2}')" || return $?
+  git add $(git rev-parse --show-toplevel) || return $?
+  git commit --amend --no-edit || return $?
+  git push --force origin "${branch}"
+}
+
+# This allows the function to be run as a script if this file is executed directly
+# [[ $- == *i* ]] || gpush "$@"

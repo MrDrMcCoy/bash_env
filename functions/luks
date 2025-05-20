@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+crypttab_format () {
+  # $1 is a regex name filter
+  while read name path key opts ; do
+    [[ ${name} =~ $1 ]] &&
+      cryptsetup luksFormat -qd "${key}" --key-size=512 --hash=sha512 --label="${name}" "${path}" &
+  done < /etc/crypttab
+  wait
+  sleep 1
+  sync
+}
+
+crypttab_open () {
+  # $1 is a regex name filter
+  while read name path key opts ; do
+      [[ ${name} =~ $1 ]] &&
+      cryptsetup open --allow-discards -d "${key}" "${path}" "${name}" &
+  done < /etc/crypttab
+  wait
+  sync
+}

@@ -2,3 +2,4 @@
 
 command -v ffmpeg &>/dev/null && alias ffmpeg="ffmpeg -loglevel error -stats"
 command -v ffplay &>/dev/null && alias ffplay="ffplay -loglevel error -autoexit"
+command -v ffprobe &>/dev/null && alias ffprobe="ffprobe -hide_banner -loglevel fatal -show_error -show_format -show_streams -show_programs -show_chapters -show_private_data -print_format json"
