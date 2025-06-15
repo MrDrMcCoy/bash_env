@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+c264 () {
+    for infile in "${@}" ; do
+        cd "$(dirname "${infile}")"
+        [[ "${infile}" =~ \.(av1an|ffmpeg)(.+)?\.(mkv|mp4)$ ]] && continue
+        printf 'Transcoding "%s"...\n' "${infile}"
+        local ffprobe_json="$(ffprobe -hide_banner -loglevel fatal -show_error -show_format -show_streams -show_programs -show_chapters -show_private_data -print_format json "${infile}")"
+        local ffmpeg_opt=(
+          -n
+          -loglevel error
+          -stats
+          -i "${infile}"
+          -map 0:v
+        )
+        local -i audio_channels=$(jq '[.streams[].channels|select(numbers)]|max|select(.!=null)' <<< "${ffprobe_json}")
+        for index in $(jq --arg audio_channels ${audio_channels} '[.streams[]|select(.channels==($audio_channels|tonumber)),select([.codec_name]|inside(["ass","dvb_subtitle","dvd_subtitle","subrip","webvtt"]))]|sort_by(.tags.language?)[].index' <<< "${ffprobe_json}") ; do
+            ffmpeg_opt+=( -map 0:${index} )
+        done
+        if $(jq --arg audio_channels ${audio_channels} '[.streams[]|select(.channels==($audio_channels|tonumber)).codec_name|IN("aac","opus","flac")]|all' <<< "${ffprobe_json}") ; then
+          local ffmpeg_opt+=( -c:a copy )
+        else
+          local ffmpeg_opt+=( -c:a aac -vbr 4 )
+        fi
+        local c264_to_sdr=""
+        [[ "$(jq '.streams[0].color_transfer' <<< "${ffprobe_json}")" =~ arib|smpte ]] && local c264_to_sdr+="zscale=t=linear:npl=100,format=gbrpf32le,"
+        [[ "$(jq '.streams[0].color_primaries' <<< "${ffprobe_json}")" =~ bt709|null ]] || local c264_to_sdr+="${c264_to_sdr}zscale=p=bt709,"
+        [[ "$(jq '.streams[0].color_transfer' <<< "${ffprobe_json}")" =~ arib|smpte ]] && local c264_to_sdr+="${c264_to_sdr}tonemap=tonemap=reinhard,"
+        [[ "$(jq '.streams[0].color_transfer' <<< "${ffprobe_json}")" =~ bt709|null ]] || local c264_to_sdr+="${c264_to_sdr}zscale=t=bt709:m=bt709:r=tv,"
+        local ffmpeg_opt+=(
+            -vf ${c264_to_sdr:-}format=yuv420p,deband,cas=0.5,hqdn3d
+            -c:v libx264
+            -profile:v high
+            -tune animation
+            -preset veryslow
+            -crf 22
+            -maxrate 50M
+            -bufsize 100M
+            -c:s mov_text
+            -movflags +faststart
+            "${infile%.*}.ffmpeg.x264.aac.mp4"
+        )
+        time nice -n19 ffmpeg "${ffmpeg_opt[@]}" || return ${?}
+    done
+}

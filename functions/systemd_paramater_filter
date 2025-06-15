@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+systemd_paramater_filter () {
+  declare -A parameter_versions=(
+    []=
+    []=
+    []=
+    []=
+    []=
+    []=
+    []=
+    []=
+    []=
+    []=
+    []=
+    []=
+    []=
+    []=
+  )
+  launch_opts=(
+      systemd-run
+      --user
+      --service-type=exec
+      --same-dir
+      --pty
+      --pipe
+      -p CPUWeight=1
+      -p IOWeight=1
+      -p Nice=19
+      -p IOSchedulingPriority=7
+      # -p CPUSchedulingPolicy=idle
+      # -p IOSchedulingClass=idle
+      -p MemoryHigh=$(awk '/MemTotal/{ print int($2*.15) }' /proc/meminfo)K
+      -p MemoryMax=$( awk '/MemTotal/{ print int($2*.20) }' /proc/meminfo)K
+      -p OOMScoreAdjust=1000
+      "${@}"
+  )
+ "${launch_opts[@]}"
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || systemd_paramater_filter "$@"

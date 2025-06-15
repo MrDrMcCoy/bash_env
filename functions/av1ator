@@ -2,10 +2,10 @@
 
 av1ator () {
     for infile in "${@}" ; do
-        [[ "${infile}" =~ \.av1an\.mkv$ ]] && continue
+        [[ "${infile}" =~ \.av1ator\.mkv$ ]] && continue
         local av1an_opt=(
             -i="${infile}"
-            -o="${infile%.*}.av1an.mkv"
+            -o="${infile%.*}.av1ator.mkv"
             -s="${infile%.*}.scenes.json"
             -n
             --audio-params=-an
@@ -15,14 +15,14 @@ av1ator () {
             --extra-split=0
             --ffmpeg="${av1an_ffmpeg:--vf deblock=block=8,deband,cas=0.5,hqdn3d}"
             --pix-format=yuv420p10le
-            --video-params="${avian_video_params:---rc 0 --crf 30 --preset 8 --tune 0 --film-grain-denoise 0 --film-grain 0 --input-depth 10 --lookahead 120 --keyint 240}"
+            --video-params="${av1an_video_params:---rc 0 --crf 30 --preset 8 --tune 0 --film-grain-denoise 0 --film-grain 0 --input-depth 10 --lookahead 120 --keyint 240}"
         )
         printf 'Transcoding "%s"...\n' "${infile}"
-        time av1an "${av1an_opt[@]}" || return ${?}
+        time nice -n19 av1an "${av1an_opt[@]}" || return ${?}
 
         local ffprobe_json="$(ffprobe -hide_banner -loglevel fatal -show_error -show_format -show_streams -show_programs -show_chapters -show_private_data -print_format json "${infile}")"
         local ff_post_opts=(
-            -i "${infile%.*}.av1an.mkv"
+            -i "${infile%.*}.av1ator.mkv"
             -i "${infile}"
             -map 0:v
         )
@@ -30,34 +30,30 @@ av1ator () {
         for index in $(jq --arg audio_channels ${audio_channels} '[.streams[]|select(.channels==($audio_channels|tonumber)),select([.codec_name]|inside(["ass","dvb_subtitle","dvd_subtitle","subrip","webvtt"]))]|sort_by(.tags.language?)[].index' <<< "${ffprobe_json}") ; do
             ff_post_opts+=( -map 1:${index} )
         done
-        if [ ${audio_channels} -eq 8 ] ; then
-            ff_post_opts+=( -b:a $((32*${audio_channels}))k -mapping_family 1 -channel_layout 7.1 )
-        elif [ ${audio_channels} -eq 7 ] ; then
-            ff_post_opts+=( -b:a $((32*${audio_channels}))k -mapping_family 1 -channel_layout 7 )
-        elif [ ${audio_channels} -eq 6 ] ; then
-            ff_post_opts+=( -b:a $((32*${audio_channels}))k -mapping_family 1 -channel_layout 5.1 )
-        elif [ ${audio_channels} -eq 5 ] ; then
-            ff_post_opts+=( -b:a $((32*${audio_channels}))k -mapping_family 1 -channel_layout 5 )
-        elif [ ${audio_channels} -eq 4 ] ; then
-            ff_post_opts+=( -ac 2 -b:a $((32*${audio_channels}))k )
-        elif [ ${audio_channels} -eq 3 ] ; then
-            ff_post_opts+=( -ac 2 -b:a $((64*${audio_channels}))k )
-        elif [ ${audio_channels} -eq 2 ] ; then
-            ff_post_opts+=( -b:a $((64*${audio_channels}))k )
-        elif [ ${audio_channels} -eq 1 ] ; then
-            ff_post_opts+=( -b:a 128k )
+        if $(jq --arg audio_channels ${audio_channels} '[.streams[]|select(.channels==($audio_channels|tonumber)).codec_name|IN("aac","opus","flac")]|all' <<< "${ffprobe_json}") ; then
+          local ffmpeg_opt+=( -c:a copy )
+        else
+          local ffmpeg_opt+=( -c:a libopus )
+          if [ ${audio_channels} -eq 8 ] ; then
+              ff_post_opts+=( -mapping_family 1 -channel_layout 7.1 )
+          elif [ ${audio_channels} -eq 7 ] ; then
+              ff_post_opts+=( -mapping_family 1 -channel_layout 7 )
+          elif [ ${audio_channels} -eq 6 ] ; then
+              ff_post_opts+=( -mapping_family 1 -channel_layout 5.1 )
+          elif [ ${audio_channels} -eq 5 ] ; then
+              ff_post_opts+=( -mapping_family 1 -channel_layout 5 )
+          fi
         fi
         local ff_post_opts+=(
-            -c:a libopus
             -c:v copy
             -c:s mov_text
             -movflags +faststart
-            "${infile%.*}.av1.opus.mp4"
+            "${infile%.*}.av1ator.mp4"
         )
         time ffmpeg -n "${ff_post_opts[@]}" || return ${?}
 
         if [ "${av1ator_clean:-}" ] ; then
-            echo rm -v "${infile%.*}.av1an.mkv"
+            echo rm -v "${infile%.*}.av1ator.mkv"
         fi
     done
 }
