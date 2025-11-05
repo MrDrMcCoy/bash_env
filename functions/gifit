@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+gifit(){
+    local infile=''
+    local outfile=''
+    local -i rate=12
+    local speed='0.90'
+    local -i quality=90
+    local -i width=640
+    local help='
+Usage: gifit [options ...]
+
+Options:
+-i [input file path (type: string)]
+-r [frame rate (type: int, default: 12)]
+-s [speed (Type: float, default: 0.90)]
+-q [quality (Type: int, range: 1-100, default: 90)]
+-w [pixel width (type: int, default: 640)]
+
+Output file name will be the same as the input, substituting the first dot
+suffix with ".gif", adding it if there is none.
+
+On successful conversion, it will attempt to open the file in your default
+image viewer application.
+
+Dependencies: ffmpeg, ffprobe, gifski
+'
+    while (( "$#" )); do case "${1}" in
+        (*-h*) printf "%s" "${help}" ; return ;;
+        (-i) shift ; infile=${1} ;;
+        (-r) shift ; rate=${1} ;;
+        (-s) shift ; speed=${1} ;;
+        (-q) shift ; quality=${1} ;;
+        (-w) shift ; width=${1} ;;
+        (*) printf "ERROR: Unknown option: '${1}'\n${help}" ; return ;;
+    esac; shift; done
+    command -v ffmpeg &>/dev/null || {
+        printf "ERROR: ffmpeg not found.\n" ; return ;}
+    command -v ffprobe &>/dev/null || {
+        printf "ERROR: ffprobe not found.\n" ; return ;}
+    command -v gifski &>/dev/null || {
+        printf "ERROR: gifski not found.\n" ; return ;}
+    [ "${opener}" != ":" ] || { printf "WARN: " ; return ;}
+    [ -f "${infile}" ] || {
+        printf "ERROR: Input path invalid: '%s'\n" "${infile}" ; return ;}
+    ffprobe "${infile}" &>/dev/null || {
+        printf "ffprobe of input file failed.\n" ; return ;}
+    outfile="${infile%%.*}.gif"
+    ffmpeg \
+        -i "${infile}" \
+        -pix_fmt yuv444p \
+        -vf "setpts=${speed}*PTS" \
+        -r "${rate}" \
+        -f yuv4mpegpipe \
+        - |
+            gifski \
+                --width "${width}" \
+                --quality "${quality}" \
+                --output "${outfile}" \
+                --extra \
+                - ||
+                    return $?
+    if command -v xdg-open &>/dev/null ; then xdg-open "${outfile}"
+    elif command -v start &>/dev/null ; then start "${outfile}"
+    elif command -v open &>/dev/null ; then open "${outfile}"
+    else false
+    fi || printf "WARNING: Could not open resulting gif: '%s'\n" "${outfile}"
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || gifit "${@}"
