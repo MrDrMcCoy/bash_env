@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+sdrun () {
+  local -a launch_opts=(
+      systemd-run
+      --user
+      --collect
+      --service-type=exec
+      --same-dir
+      --pty
+      --pipe
+      -p CPUWeight=50
+      -p IOWeight=50
+      -p MemoryHigh=$(awk '/MemTotal/{ print int($2*.80) }' /proc/meminfo)K
+      -p MemoryMax=$( awk '/MemTotal/{ print int($2*.90) }' /proc/meminfo)K
+      -p OOMScoreAdjust=999
+      "${@}"
+  )
+ "${launch_opts[@]}"
+}
+
+# This allows the function to be run as a script if this file is executed directly
+[[ $- == *i* ]] || sdrun "$@"

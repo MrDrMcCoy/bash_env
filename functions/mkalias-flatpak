@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+mkalias-flatpak(){
+  local -a launch=(
+    systemd-run
+    --user
+    --collect
+    --service-type=exec
+    --same-dir
+    --pty
+    --pipe
+    -p CPUWeight=50
+    -p IOWeight=50
+    -p MemoryHigh=$(awk '/MemTotal/{ print int($2*.80) }' /proc/meminfo)K
+    -p MemoryMax=$( awk '/MemTotal/{ print int($2*.90) }' /proc/meminfo)K
+    -p OOMScoreAdjust=999
+    flatpak run
+  )
+  while read -r app ; do
+    name="$(awk -F \. '{print tolower($NF)}' <<< "${app}")"
+    eval "alias ${name}='${launch[*]} ${app}'"
+  done <<<"$(flatpak list --app --columns=application | tail -n+1)"
+  for p in /var/lib/flatpak/exports/bin/* ; do
+    app="$(basename "${p}")"
+    name="$(awk -F \. '{print tolower($NF)}' <<< "${p}")"
+    eval "alias ${name}='${launch[*]} ${app}'"
+  done
+}
+mkalias-flatpak
+# This allows the function to be run as a script if this file is executed directly
+# [[ $- == *i* ]] || mkalias-flatpak "$@"
