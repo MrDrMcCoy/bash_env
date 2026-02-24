@@ -5,7 +5,7 @@ qcomp () {
   # Usage:
   #   qcomp /path/to/file/or/dir ...
   if command -v zstd ; then
-    local cmd="zstd -qT0 --long --adapt=min=9"
+    local cmd="zstd -qT0 --long --adapt"
     local ext="zst"
   elif command -v xz ; then
     local cmd="xz -q0T0"

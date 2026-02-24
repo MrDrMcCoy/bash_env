@@ -16,10 +16,10 @@ prunner () {
   # Process option arguments
   while (($#)) ; do
     case "${1}" in
-      --command|-c) shift ; local PCMD="${1}" ;;
-      --threads|-t) shift ; local -i THREADS="${1}" ;;
-      -*) quit "ERROR" "Option '${1}' is not defined." || return 1 ;;
-      *) PQUEUE+=("${1}") ;;
+      (--command|-c) shift ; local PCMD="${1}" ;;
+      (--threads|-t) shift ; local -i THREADS="${1}" ;;
+      (-*) quit "ERROR" "Option '${1}' is not defined." || return 1 ;;
+      (*) PQUEUE+=("${1}") ;;
     esac
     shift
   done

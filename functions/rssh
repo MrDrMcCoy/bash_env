@@ -2,7 +2,7 @@
 
 rssh () {
   # Retries ssh connections until ssh exits cleanly
-  until ssh "${@}" exit ; do true ; done ; ssh "${@}"
+  until ssh -o ConnectTimeout=5 exit ; do true ; done ; ssh "${@}"
 }
 
 # This allows the function to be run as a script if this file is executed directly

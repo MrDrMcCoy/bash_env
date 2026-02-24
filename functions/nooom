@@ -10,9 +10,9 @@ nooom () {
       --pipe
       -p OOMScoreAdjust=1000
       -p OOMPolicy=kill
-      -p MemoryLow=$(awk '/MemTotal/{ print int($2*.1) }' /proc/meminfo)K
-      -p MemoryHigh=$(awk '/MemTotal/{ print int($2*.5) }' /proc/meminfo)K
-      -p MemoryMax=$(awk '/MemTotal/{ print int($2*.75) }' /proc/meminfo)K
+      -p MemoryLow=10%
+      -p MemoryHigh=50%
+      -p MemoryMax=75%
       "${@}"
   )
  "${launch_opts[@]}"

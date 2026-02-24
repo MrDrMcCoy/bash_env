@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 
 gnstat() {
   printf "cmd\tpid\tport\n"
