@@ -9,6 +9,12 @@ ${HOME}/.cargo/bin
 ${HOME}/.local/bin
 ${HOME}/node_modules/.bin
 ${HOME}/.nvm/versions/node/$(cat ${HOME}/.nvm/alias/default &>/dev/null)/bin
+${HOME}/venv/bin
+${ROCM_PATH:-/opt/rocm}/bin
+${ROCM_PATH:-/opt/rocm}/llvm/bin
+/opt/llama
+/opt/llama/build/bin
+/opt/sd/build/bin
 /opt/local/bin
 /opt/local/sbin
 /opt/bin
