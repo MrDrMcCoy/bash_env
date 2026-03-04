@@ -26,6 +26,6 @@ mkalias-flatpak(){
     eval "alias ${name}='${launch[*]} ${app}'"
   done
 }
-mkalias-flatpak
+command -v flatpak &>/dev/null && mkalias-flatpak
 # This allows the function to be run as a script if this file is executed directly
 # [[ $- == *i* ]] || mkalias-flatpak "$@"

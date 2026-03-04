@@ -2,12 +2,13 @@
 
 export ROCM_VERSION=7.1
 export ROCM_PATH=/opt/rocm
-export ROCM_HOME=${ROCM_HOME}
-export LD_LIBRARY_PATH=/usr/include/vulkan:${ROCM_HOME}/include:${ROCM_HOME}/lib:${ROCM_HOME}/lib/llvm/lib:${ROCM_HOME}/lib/migraphx/lib:${LD_LIBRARY_PATH:-}
+export ROCM_HOME=${ROCM_PATH}
+export LD_LIBRARY_PATH=/usr/include/vulkan:${ROCM_PATH}/include:${ROCM_PATH}/lib:${ROCM_PATH}/lib/llvm/lib:${ROCM_PATH}/lib/migraphx/lib:${LD_LIBRARY_PATH:-}
 export DEVICE_LIB_PATH=${ROCM_PATH}/llvm/amdgcn/bitcode
 export HIP_DEVICE_LIB_PATH=${DEVICE_LIB_PATH}
-export FLASH_ATTENTION_TRITON_AMD_ENABLE="TRUE"
+export HIP_PLATFORM=amd
 export HIPCC=${ROCM_PATH}/bin/hipcc
+export FLASH_ATTENTION_TRITON_AMD_ENABLE="TRUE"
 export PYTHONUNBUFFERED=1
 export CMAKE_MODULE_PATH=${ROCM_PATH}/lib/cmake/hip
 
@@ -20,12 +21,13 @@ export GGML_VULKAN_DEVICE=0,1,2
 export GGML_VK_VISIBLE_DEVICES=0,1,2
 
 export AMDGPU_FAMILY=gfx120X-all
-export AITER_ROCM_ARCH=gfx1201
 export GFX_ARCH=gfx1201
-export GPU_TARGETS=gfx1201
-export GPU_ARCH=gfx1201
-export HCC_AMDGPU_TARGET=gfx1201
-export PYTORCH_ROCM_ARCH=gfx1201
+export GPU_ARCH=${GFX_ARCH}
+export GPU_TARGETS=${GFX_ARCH}
+export AITER_ROCM_ARCH=${GFX_ARCH}
+export AMDGPU_TARGETS=${GFX_ARCH}
+export HCC_AMDGPU_TARGET=${GFX_ARCH}
+export PYTORCH_ROCM_ARCH=${GFX_ARCH}
 export HSA_OVERRIDE_GFX_VERSION=12.0.1
 export HSA_NO_SCRATCH_RECLAIM=1
 export OMP_DEFAULT_DEVICE=1
