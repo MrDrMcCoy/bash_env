@@ -3,6 +3,7 @@
 export ROCM_VERSION=7.1
 export ROCM_PATH=/opt/rocm
 export ROCM_HOME=${ROCM_HOME}
+export LD_LIBRARY_PATH=/usr/include/vulkan:${ROCM_HOME}/include:${ROCM_HOME}/lib:${ROCM_HOME}/lib/llvm/lib:${ROCM_HOME}/lib/migraphx/lib:${LD_LIBRARY_PATH:-}
 export DEVICE_LIB_PATH=${ROCM_PATH}/llvm/amdgcn/bitcode
 export HIP_DEVICE_LIB_PATH=${DEVICE_LIB_PATH}
 export FLASH_ATTENTION_TRITON_AMD_ENABLE="TRUE"
