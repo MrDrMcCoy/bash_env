@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-command -v hub &>/dev/null && alias git="hub"
+command -v hub &>/dev/null && alias git="hub" || true
 alias gstat="git status"

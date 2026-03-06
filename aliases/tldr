@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-command -v tealdeer &>/dev/null && alias tldr="tealdeer"
+command -v tealdeer &>/dev/null && alias tldr="tealdeer" || true

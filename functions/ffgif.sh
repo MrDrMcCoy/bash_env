@@ -82,4 +82,4 @@ return 0 ;;
 }
 
 # This allows the function to be run as a script if this file is executed directly
-[[ $- == *i* ]] || ffgif "$@"
+# [[ $- == *i* ]] || ffgif "$@"

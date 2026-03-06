@@ -1,71 +1,45 @@
 #!/usr/bin/env bash
 
 # Replace PATH
-export PATH="$(
-tr '\n' ':' <<EOF
-${HOME}/bin
-${HOME}/go/bin
-${HOME}/.cargo/bin
-${HOME}/.local/bin
-${HOME}/node_modules/.bin
-${HOME}/.nvm/versions/node/$(cat ${HOME}/.nvm/alias/default &>/dev/null)/bin
-${HOME}/venv/bin
-${ROCM_PATH:-/opt/rocm}/bin
-${ROCM_PATH:-/opt/rocm}/llvm/bin
-/opt/llama
-/opt/llama/build/bin
-/opt/sd/build/bin
-/opt/local/bin
-/opt/local/sbin
-/opt/bin
-/opt/sbin
-/var/lib/flatpak/exports/bin
-/usr/games
-/usr/lib/kf5
-/usr/lib/kf6
-/usr/lib/x86_64-linux-gnu/libexec/kf5
-/usr/lib/x86_64-linux-gnu/libexec/kf6
-/usr/local/bin
-/usr/local/sbin
-/usr/share/kf5
-/usr/share/kf6
-/usr/bin
-/usr/sbin
-/bin
-/sbin
-${HOME}/.krew/bin
-${HOME}/Nextcloud/scripts
-EOF
-)"
-
-# /opt/X11/bin
-# /usr/local/opt/coreutils/libexec/gnubin
-# /usr/local/opt/gawk/libexec/gnubin
-# /usr/local/opt/grep/libexec/gnubin
-# /usr/local/opt/gnu-tar/libexec/gnubin
-# /usr/local/opt/gnu-sed/libexec/gnubin
-# ${HOME}/AppData/Local/GitHubDesktop/bin
-# ${HOME}/AppData/Local/Programs/Microsoft VS Code/bin
-# ${HOME}/AppData/Roaming/npm
-# ${HOME}/Library/Python/3.7/bin
-# ${HOME}/Library/Python/2.7/bin
-# /usr/lib/mit/bin
-# /usr/lib/mit/sbin
-# /usr/local/Cellar
-# /c/Go/bin
-# /c/ProgramData/DockerDesktop/version-bin
-# /c/ProgramData/chocolatey/bin
-# /c/Program Files/Docker/Docker/resources/bin
-# /c/Program Files/Git/cmd
-# /c/Program Files/Git/mingw64/bin
-# /c/Program Files/Git/usr/bin
-# /c/Program Files/dotnet
-# /c/Program Files/nodejs
-# /c/Program Files (x86)/Microsoft SDKs/Azure/CLI2/wbin
-# /c/Windows
-# /c/Windows/System32
-# /c/Windows/System32/Wbem
-# /c/Windows/System32/WindowsPowerShell/v1.0
+PATH=""
+paths=(
+  ${HOME}/bin
+  ${HOME}/go/bin
+  ${HOME}/.cargo/bin
+  ${HOME}/.local/bin
+  ${HOME}/node_modules/.bin
+  ${HOME}/.nvm/versions/node/$(cat ${HOME}/.nvm/alias/default &>/dev/null)/bin
+  ${ROCM_PATH:-/opt/rocm}/bin
+  ${ROCM_PATH:-/opt/rocm}/llvm/bin
+  /opt/llama
+  /opt/llama/build/bin
+  /opt/sd/build/bin
+  /opt/local/bin
+  /opt/local/sbin
+  /opt/bin
+  /opt/sbin
+  /var/lib/flatpak/exports/bin
+  /usr/games
+  /usr/lib/kf5
+  /usr/lib/kf6
+  /usr/lib/x86_64-linux-gnu/libexec/kf5
+  /usr/lib/x86_64-linux-gnu/libexec/kf6
+  /usr/local/bin
+  /usr/local/sbin
+  /usr/share/kf5
+  /usr/share/kf6
+  /usr/bin
+  /usr/sbin
+  /bin
+  /sbin
+  ${HOME}/.krew/bin
+  ${HOME}/Nextcloud/scripts
+)
+for path in "${paths[@]}" ; do
+  [ -d "${path}" ] && PATH+=":${path}" || true
+done
+export PATH
+unset paths
 
 export GOPATH="${HOME}/go"
 export TMUX_TMPDIR=${HOME}/.local/tmp

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 start_agent () {
-  [ -d "${XDG_CACHE_HOME}" ] || XDG_CACHE_HOME="${HOME}/.cache"
+  [ -d "${XDG_CACHE_HOME:-}" ] || XDG_CACHE_HOME="${HOME}/.cache"
   mkdir -vpm 0700 "${XDG_CACHE_HOME}/ssh"
   { # check if agent vars are already exported
     test -S "${SSH_AUTH_SOCK}" &&

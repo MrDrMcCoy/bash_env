@@ -24,6 +24,3 @@ export ANSIBLE_SHOW_TASK_PATH_ON_FAILURE="True"
 # export PERSISTENT_CONNECT_RETRY_TIMEOUT="120"
 # export PERSISTENT_CONNECT_TIMEOUT="120"
 # export USE_PERSISTENT_CONNECTIONS="True"
-
-# [ssh_connection]
-# ssh_args = -o ControlMaster=auto -o ControlPersist=yes ServerAliveInterval=2 ServerAliveCountMax=15

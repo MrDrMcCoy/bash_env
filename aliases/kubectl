@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 command -v kubectl-krew &>/dev/null &&
-  alias krew='kubectl-krew'
+  alias krew='kubectl-krew' || true
 command -v kubecolor &>/dev/null &&
   command -v kubectl &>/dev/null &&
-    alias kubectl='kubecolor'
+    alias kubectl='kubecolor' || true

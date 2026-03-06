@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 # command -v fd &>/dev/null && alias find="echo 'Use fd.'"
-command -v fdfind &>/dev/null && alias fd=fdfind
+command -v fdfind &>/dev/null && alias fd=fdfind || true
