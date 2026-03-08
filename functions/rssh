@@ -2,7 +2,17 @@
 
 rssh () {
   # Retries ssh connections until ssh exits cleanly
-  until ssh -o ConnectTimeout=5 exit ; do true ; done ; ssh "${@}"
+  local host=""
+  local sargs=()
+  while ((${#})) ; do
+    case "${1}" in
+      (-*) sargs+=("${1}") ; shift ;;
+      (*) host="${1}" ; shift ; break ;;
+    esac
+  done
+  local args=("${@}")
+  until ssh -o ConnectTimeout=5 "${sargs[@]}" "${host}" exit ; do true ; done
+  ssh "${sargs[@]}" "${host}" "${args[@]}"
 }
 
 # This allows the function to be run as a script if this file is executed directly
