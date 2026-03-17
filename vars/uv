@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 [ -d /var/cache/uv ] && export UV_CACHE_DIR=/var/cache/uv
-export UV_COMPILE_BYTECODE="0"
+export UV_COMPILE_BYTECODE="1"
 export UV_HTTP_TIMEOUT="120"
 export UV_INDEX_STRATEGY="unsafe-first-match"
 export UV_LINK_MODE="copy"
@@ -9,10 +9,10 @@ export UV_NO_BUILD_ISOLATION="true"
 # export UV_PRERELEASE="if-necessary-or-explicit"
 export UV_PRERELEASE="allow"
 export UV_PYTHON="python3.12"
-export UV_VENV_CLEAR="true"
 export UV_VENV_SEED="true"
 [ -d ${HOME}/venv ] || uv venv ${HOME}/venv || true
 [ -d ${HOME}/venv ] && {
   export PYTHONHOME=${HOME}/venv
-  source ${HOME}/venv/bin/activate
+  export VIRTUAL_ENV=${HOME}/venv
+  source ${VIRTUAL_ENV}/bin/activate
 }

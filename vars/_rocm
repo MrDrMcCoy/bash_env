@@ -1,7 +1,15 @@
 #!/usr/bin/env bash
 
 command -v rocminfo &>/dev/null && {
-export ROCM_PATH=/opt/rocm
+export ROCM_PATH=${ROCM_PATH:-/opt/rocm}
+export AMDGPU_FAMILY=${AMDGPU_FAMILY:-gfx120X-all}
+export GFX_ARCH=${GFX_ARCH:-gfx1201}
+export HSA_OVERRIDE_GFX_VERSION=${HSA_OVERRIDE_GFX_VERSION:-12.0.1}
+export GPU_IDS=${GPU_IDS:-0,1,2}
+export ROCR_VISIBLE_DEVICES=${ROCR_VISIBLE_DEVICES:-GPU-6cd948adfa8a0662,GPU-baa51ac4e73599f5,GPU-90528b9fd697e}
+export OMP_DEFAULT_DEVICE=${OMP_DEFAULT_DEVICE:-1}
+export DRI_PRIME=${DRI_PRIME:-1}
+
 export ROCM_HOME=${ROCM_PATH}
 export LD_LIBRARY_PATH=/usr/include/vulkan:${ROCM_PATH}/include:${ROCM_PATH}/lib:${ROCM_PATH}/lib/llvm/lib:${ROCM_PATH}/lib/migraphx/lib:${LD_LIBRARY_PATH:-}
 export DEVICE_LIB_PATH=${ROCM_PATH}/amdgcn/bitcode
@@ -15,7 +23,6 @@ export FLASH_ATTENTION_TRITON_AMD_ENABLE="TRUE"
 export PYTHONUNBUFFERED=1
 export CMAKE_MODULE_PATH=${ROCM_PATH}/lib/cmake/hip
 
-export GPU_IDS=0,1,2
 export GPU_DEVICE_ORDINAL=${GPU_IDS}
 export HIP_VISIBLE_DEVICES=${GPU_IDS}
 export CUDA_VISIBLE_DEVICES=${GPU_IDS}
@@ -23,26 +30,20 @@ export LLAMA_HIPLAS=${GPU_IDS}
 export LLAMA_HIPBLAS=${GPU_IDS}
 export GGML_VULKAN_DEVICE=${GPU_IDS}
 export GGML_VK_VISIBLE_DEVICES=${GPU_IDS}
-export ROCR_VISIBLE_DEVICES=GPU-6cd948adfa8a0662,GPU-baa51ac4e73599f5,GPU-90528b9fd697e
 
-export AMDGPU_FAMILY=gfx120X-all
-export GFX_ARCH=gfx1201
 export GPU_ARCH=${GFX_ARCH}
 export GPU_TARGETS=${GFX_ARCH}
 export AITER_ROCM_ARCH=${GFX_ARCH}
 export AMDGPU_TARGETS=${GFX_ARCH}
 export HCC_AMDGPU_TARGET=${GFX_ARCH}
 export PYTORCH_ROCM_ARCH=${GFX_ARCH}
-export HSA_OVERRIDE_GFX_VERSION=12.0.1
 export HSA_NO_SCRATCH_RECLAIM=1
-export OMP_DEFAULT_DEVICE=1
 export OMP_NUM_THREADS=$(nproc)
 export CUPY_INSTALL_USE_HIP=1
-export DRI_PRIME=1
 
 # export UV_TORCH_BACKEND="rocm7.1"
-export UV_DEFAULT_INDEX="https://rocm.nightlies.amd.com/v2/${AMDGPU_FAMILY:-gfx120X-all}"
-export UV_INDEX="https://wheels.vllm.ai/rocm/vllm"
+export UV_INDEX="https://rocm.nightlies.amd.com/v2/${AMDGPU_FAMILY}"
+export UV_INDEX+=" https://wheels.vllm.ai/rocm/vllm"
 export UV_INDEX+=" https://repo.radeon.com/rocm/manylinux/rocm-rel-7.2"
 export UV_INDEX+=" https://repo.radeon.com/rocm/manylinux/rocm-rel-7.1"
 export UV_INDEX+=" https://repo.radeon.com/rocm/manylinux/rocm-rel-7.0"
@@ -54,5 +55,4 @@ export UV_INDEX+=" https://download.pytorch.org/whl/rocm7.0"
 export UV_INDEX+=" https://download.pytorch.org/whl/rocm6.4"
 export UV_INDEX+=" https://download.pytorch.org/whl/rocm6.3"
 export UV_INDEX+=" https://download.pytorch.org/whl/rocm6.2.4"
-export UV_INDEX+=" https://pypi.org/simple"
 }
